@@ -164,7 +164,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	// get the frontend template to use in the event selection ui
 	public function get_templates( $event ) {
 		// make sure we have an event area
-		$event->event_area = isset( $event->event_area ) && is_object( $event->event_area ) ? $event->event_area : apply_filters( 'qsot-event-area-for-event', false, $GLOBALS['post'] );
+		$event->event_area = isset( $event->event_area ) && is_object( $event->event_area ) ? $event->event_area : apply_filters( 'qsot-event-area-for-event', false, $post );
 
 		// if there is no event area, then bail
 		if ( ! isset( $event->event_area ) || ! is_object( $event->event_area ) )
@@ -844,7 +844,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		$zoner = $event_area->area_type->get_zoner();
 		$stati = $zoner->get_stati();
 
-		global $wpdb;
+		$wpdb='';
 		// perform the update
 		return $zoner->update( false, array(
 			'event_id' => $item['event_id'],
@@ -879,7 +879,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		$zoner = $event_area->area_type->get_zoner();
 		$stati = $zoner->get_stati();
 
-		global $wpdb;
+		$wpdb='';
 		// perform the update
 		return $zoner->update( false, array(
 			'event_id' => $item['event_id'],
@@ -915,7 +915,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		$zoner = $event_area->area_type->get_zoner();
 		$stati = $zoner->get_stati();
 
-		global $wpdb;
+		$wpdb='';
 		// perform the update
 		return $zoner->remove( false, array(
 			'event_id' => $item['event_id'],

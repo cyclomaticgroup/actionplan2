@@ -325,7 +325,7 @@ abstract class QSOT_Admin_Report {
 
 	// because this can accumulate a lot of memory usage over time, we need to occassionally clear out our internal caches to compensate
 	protected function _clean_memory() {
-		global $wpdb, $wp_object_cache;
+	    $wpdb=''; $wp_object_cache='';
 		// clear our the query cache, cause it can be huge
 		$wpdb->flush();
 
@@ -619,8 +619,7 @@ abstract class QSOT_Admin_Report {
 	protected function _printer_friendly_header() {
 		define( 'IFRAME_REQUEST', true );
 		// direct copy from /wp-admin/admin-header.php
-		global $title, $hook_suffix, $current_screen, $wp_locale, $pagenow, $wp_version,
-			$update_title, $total_update_count, $parent_file;
+		$title=''; $hook_suffix=''; $current_screen=''; $wp_locale='';  $wp_version='';
 
 		// Catch plugins that include admin-header.php before admin.php completes.
 		if ( empty( $current_screen ) )
@@ -815,7 +814,7 @@ abstract class QSOT_Admin_Report {
 
 	// get the order item meta data
 	protected function _order_item_meta_from_oiid_list( $oiids ) {
-		global $wpdb;
+		$wpdb='';
 		$rows = array();
 		// grab all the meta for the matched order items, if any
 		if ( ! empty( $oiids ) ) {
@@ -888,7 +887,7 @@ abstract class QSOT_Admin_Report {
 		if ( empty( $order_ids ) )
 			return array();
 
-		global $wpdb;
+		$wpdb='';
 		// get all the post meta for all orders
 		$all_meta = $wpdb->get_results( 'select * from ' . $wpdb->postmeta . ' where post_id in (' . implode( ',', $order_ids ) . ') order by meta_id desc' );
 

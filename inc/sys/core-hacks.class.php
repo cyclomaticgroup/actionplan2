@@ -258,7 +258,7 @@ class qsot_core_hacks
      */
     public function woocommerce_order_totals_meta_box($post)
     {
-        global $theorder, $wpdb;
+        $theorder=''; $wpdb='';
         $woocommerce = WC();
 
         if (!is_object($theorder))
@@ -396,7 +396,7 @@ class qsot_core_hacks
             <h4><?php _e('Tax Rows', 'opentickets-community-edition'); ?></h4>
             <div id="tax_rows" class="total_rows">
                 <?php
-                global $wpdb;
+                $wpdb='';
 
                 $rates = $wpdb->get_results("SELECT tax_rate_id, tax_rate_country, tax_rate_state, tax_rate_name, tax_rate_priority FROM {$wpdb->prefix}woocommerce_tax_rates ORDER BY tax_rate_name");
 
@@ -645,7 +645,7 @@ class qsot_core_hacks
 
     public static function or_display_name_user_query(&$query) {
         if (!isset($_GET['term'], $_REQUEST['s'])) return;
-        global $wpdb;
+        $wpdb='';
         $term = preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_GET['term'] ) ) ));
         $term = empty($term) && is_admin() ? preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_REQUEST['s'] ) ) )) : $term;
         if (!empty($term))
@@ -820,7 +820,7 @@ class qsot_core_hacks
             foreach ($meta as $k => $v) update_user_meta($user->ID, $k, $v);
 
             if (isset($meta['first_name'], $meta['last_name']) && !empty($meta['first_name']) && !empty($meta['last_name'])) {
-                global $wpdb;
+                $wpdb='';
                 $wpdb->update($wpdb->users, array('display_name' => $meta['first_name'] . ' ' . $meta['last_name']), array('id' => $user->ID));
             }
         }

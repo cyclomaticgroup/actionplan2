@@ -238,7 +238,7 @@ class QSOT_Post_Type_Event_Area {
 	// enqueue the frontend assets we need
 	public function enqueue_assets( $post ) {
 		// figure out the event area type of this event
-		$event_area = apply_filters( 'qsot-event-area-for-event', false, $GLOBALS['post'] );
+		$event_area = apply_filters( 'qsot-event-area-for-event', false, $post );
 		$area_type = is_object( $event_area ) && ! is_wp_error( $event_area ) ? $this->event_area_type_from_event_area( $event_area ) : false;
 
 		// if there is a valid area_type, then load it's frontend assets
@@ -351,15 +351,15 @@ class QSOT_Post_Type_Event_Area {
 			'event_id' => '',
 		) );
 
-		global $wpdb;
+		$wpdb='';
 
 		// construct the sql to find the total tickets by state, based on the args
 		$q = 'select state, sum(quantity) tot from ' . $wpdb->qsot_event_zone_to_order . ' where 1=1';
 		// if the event_id was specified, then add it to the query
 		if ( !empty( $args['event_id'] ) ) {
-			$event_ids = array_filter( wp_parse_id_list( $arsg['event_id'] ) );
+			$event_ids = array_filter( wp_parse_id_list( $args['event_id'] ) );
 			if ( ! empty( $event_ids ) )
-				$q .= ' and event_id in (' . implode( ',', $ids ) . ')';
+				$q .= ' and event_id in (' . implode( ',', $event_ids ) . ')';
 		}
 		// make the results grouped by the state, which we can then filter by later
 		$q .= ' group by state';
@@ -635,7 +635,8 @@ class QSOT_Post_Type_Event_Area {
 	public function maybe_hide_meta_box_by_default( $classes=array() ) {
 		static $area_type = false, $screen = false;
 		if ( false === $area_type )
-			$area_type = $this->event_area_type_from_event_area( $GLOBALS['post'] );
+		    $post='';
+			$area_type = $this->event_area_type_from_event_area( $post );
 		// if there is no area_type then bail
 		if ( ! is_object( $area_type ) || is_wp_error( $area_type ) )
 			return $classes;
@@ -680,12 +681,13 @@ class QSOT_Post_Type_Event_Area {
 	public function mb_render_event_area_type( $post ) {
 		// get the current value
 		$current = $this->event_area_type_from_event_area( $post );
-		$format = ?> <p>%s</p> <?php
+		$format = '<p>%s</p>';
 		// if there was a problem finding the current type, then display the error
 		if ( is_wp_error( $current ) ) {
 			foreach ( $current->get_error_codes() as $code )
 				foreach ( $current->get_error_messages( $code ) as $msg )
-					echo sprintf( $format , force_balance_tags( $msg ) );
+					$strmRe= sprintf( $format , force_balance_tags( $msg ) );
+				    echo $strmRe;
 			return;
 		}
 
@@ -862,7 +864,7 @@ class QSOT_Post_Type_Event_Area {
 					?>
 
 					<div class="info">
-						<?php $format = ?> <a rel="edit-event" target="_blank" href="%s">%s</a>
+						<?php $format = '<a rel="edit-event" target="_blank" href="%s">%s</a>' ?>
 						<strong><?php _e( 'Event:', 'opentickets-community-edition' ) ?></strong>
 						<?php echo sprintf( $format, get_edit_post_link( $event->ID ), apply_filters( 'the_title', $event->post_title, $event->ID ) ) ?>
 					</div>
@@ -991,7 +993,7 @@ class QSOT_Post_Type_Event_Area {
 		if ( empty( $stati ) )
 			return;
 
-		global $wpdb;
+		$wpdb='';
     // find all the rows to delete first
     // @NOTE - if a lock is associated to an order, never delete it
     $q = 'select * from ' . $wpdb->qsot_event_zone_to_order . ' where order_id = 0 and ';
@@ -1154,7 +1156,7 @@ class QSOT_Post_Type_Event_Area {
 
 	// actually perform the update
 	protected function _update_order_id( $order, $item, $item_id, $event, $event_area, $area_type ) {
-		global $wpdb;
+		$wpdb='';
 		$cuids = array();
 
 		// figure out the list of session ids to use for the lookup
@@ -1168,7 +1170,7 @@ class QSOT_Post_Type_Event_Area {
 		$zoner = $event_area->area_type->get_zoner();
 		$stati = $zoner->get_stati();
 
-		global $wpdb;
+		$wpdb='';
 		// perform the update
 		return $zoner->update( false, array(
 			'event_id' => $item['event_id'],
@@ -1531,7 +1533,7 @@ class QSOT_Post_Type_Event_Area {
 
 	// when an order item is removed, we need to also remove the associated tickets
 	public function woocommerce_before_delete_order_item( $item_id ) {
-		global $wpdb;
+		$wpdb='';
 
 		// get the event for the ticket we are deleting. if there is no event, then bail
 		$event_id = intval( wc_get_order_item_meta( $item_id, '_event_id', true ) );
@@ -1543,7 +1545,7 @@ class QSOT_Post_Type_Event_Area {
 		if ( ! is_object( $event_area ) || ! isset( $event_area->area_type ) || ! is_object( $event_area->area_type ) )
 			return;
 
-		global $wpdb;
+		$wpdb='';
 		// get the order and order item information. if they dont exist, then bail
 		$order_id = intval( $wpdb->get_var( $wpdb->prepare( 'select order_id from ' . $wpdb->prefix . 'woocommerce_order_items where order_item_id = %d', $item_id ) ) );
 		$order = wc_get_order( $order_id );
@@ -1714,13 +1716,13 @@ class QSOT_Post_Type_Event_Area {
 
 	// setup the table names used by the general admission area type, for the current blog
 	public function setup_table_names() {
-		global $wpdb;
+		$wpdb='';
 		$wpdb->qsot_event_zone_to_order = $wpdb->prefix . 'qsot_event_zone_to_order';
 	}
 
 	// define the tables that are used by this area type
 	public function setup_tables( $tables ) {
-    global $wpdb;
+    $wpdb='';
 		// the primary table that links everything together
     $tables[ $wpdb->qsot_event_zone_to_order ] = array(
       'version' => '1.3.0',

@@ -224,7 +224,7 @@ class qsot_frontend_calendar {
 		$locale = str_replace( '_', '-', strtolower( get_locale() ) );
 		$locale_parts = explode( '-', $locale );
 
-		global $wp_scripts;
+		$wp_scripts='';
 		if ( ! is_object( $wp_scripts ) )
 			return;
 		// see if we have a registered script for this language
@@ -256,7 +256,7 @@ class qsot_frontend_calendar {
 		// get the name
 		$slug = sanitize_title( 'qsot-calendar' );
 
-		global $wp_registered_sidebars;
+		$wp_registered_sidebars='';
 		// inject the sidebar now, if it is not already registered
 		if ( ! isset( $wp_registered_sidebars[ $slug ] ) ) {
 			$a = array(
@@ -304,12 +304,12 @@ class qsot_frontend_calendar {
 
 			$added = false;
 			// queue the language js template
-			if ( isset( $GLOBALS['wp_scripts']->registered[ 'fullcalendar-lang-' . $language ] ) ) {
+			if ( isset( $wp_scripts->registered[ 'fullcalendar-lang-' . $language ] ) ) {
 				$added = true;
 				wp_enqueue_script( 'fullcalendar-lang-' . $language );
 			}
 			// if the specific language template is not registered, then try the 'primary language' (the first 'segment' of the $language value [segments delimited by '-'] )
-			if ( ! $added && count( $language_pieces ) > 1 && isset( $GLOBALS['wp_scripts']->registered[ 'fullcalendar-lang-' . $language_pieces[0] ] ) ) {
+			if ( ! $added && count( $language_pieces ) > 1 && isset( $wp_scripts->registered[ 'fullcalendar-lang-' . $language_pieces[0] ] ) ) {
 				$added = true;
 				wp_enqueue_script( 'fullcalendar-lang-' . $language_pieces[0] );
 			}
@@ -443,7 +443,7 @@ class qsot_frontend_calendar {
 
 	// aggregate all the data about a list of calendar events
 	public static function get_all_calendar_events( $events ) {
-		global $wpdb;
+        $wpdb='';
 		static $show_count = null;
 		// figure out if we need to include the count of the availability
 		if ( null == $show_count )

@@ -1,6 +1,6 @@
 <?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
-require_once $GLOBALS['woocommerce']->plugin_path() . '/includes/admin/class-wc-admin-settings.php';
+require_once $woocommerce->plugin_path() . '/includes/admin/class-wc-admin-settings.php';
 
 class qsot_admin_settings extends WC_Admin_Settings {
 
@@ -54,7 +54,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	}
 
 	public static function save() {
-		global $current_section, $current_tab;
+		$current_section=''; $current_tab='';
 
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'qsot-settings' ) )
             trigger_error("Action failed. Please refresh the page and retry.", E_USER_NOTICE);
@@ -158,7 +158,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	}
 
 	public static function output() {
-		global $current_section, $current_tab;
+		$current_section=''; $current_tab='';
 
 		do_action( 'qsot_settings_start' );
 

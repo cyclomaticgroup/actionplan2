@@ -150,7 +150,7 @@ class qsot_post_type {
 		if (!$post_type->hierarchical) return $permalink;
 
 		// copied and slightly modified to actually work with WP_Query() from wp-includes/link-template.php @ get_post_permalink()
-		global $wp_rewrite;
+		$wp_rewrite='';
 
 		$post_link = $wp_rewrite->get_extra_permastruct($post->post_type);
 		$draft_or_pending = isset($post->post_status) && in_array( $post->post_status, array( 'draft', 'pending', 'auto-draft' ) );
@@ -176,7 +176,7 @@ class qsot_post_type {
 		$post = get_post();
 		// only make changes if we are talking about event posts
 		if ( self::$o->core_post_type == $post->post_type ) {
-			global $wpdb;
+			$wpdb='';
 
 			// using start date as the sorter not the post_date
 			$start = get_post_meta( $post->ID, '_start', true );
@@ -199,7 +199,7 @@ class qsot_post_type {
 		$post = get_post();
 		// only make changes if we are talking about event posts
 		if ( self::$o->core_post_type == $post->post_type ) {
-			global $wpdb;
+			$wpdb='';
 			// using start date as the sorter not the post_date
 			$join .= $wpdb->prepare( ' inner join ' . $wpdb->postmeta . ' as qspm on qspm.post_id = p.ID AND qspm.meta_key = %s', '_start' );
 		}
@@ -244,21 +244,21 @@ class qsot_post_type {
 	}
 
 	public static function add_event_name_to_emails($item_id, $item, $order) {
-		$format = ?> <br/><small><strong> <?php ;
+		$format = '<br/><small><strong>';
 		if (!isset($item['event_id']) || empty($item['event_id'])) return;
 		$event = apply_filters('qsot-get-event', false, $item['event_id']);
 		if (!is_object($event)) return;
-
-		echo sprintf(
-			$format . __( 'Event', 'opentickets-community-edition' ) . '</strong>: <a class="event-link" href="%s" target="_blank" title="%s">%s</a></small>',
-			get_permalink( $event->ID ),
-			__('View this event','opentickets-community-edition'),
-			apply_filters( 'the_title', $event->post_title, $event->ID )
-		);
+        $strOpTc = sprintf(
+            $format . __( 'Event', 'opentickets-community-edition' ) . '</strong>: <a class="event-link" href="%s" target="_blank" title="%s">%s</a></small>',
+            get_permalink( $event->ID ),
+            __('View this event','opentickets-community-edition'),
+            apply_filters( 'the_title', $event->post_title, $event->ID )
+        );
+		echo $strOpTc;
 	}
 
 	public static function patch_menu() {
-		global $menu, $submenu;
+		$menu=''; $submenu='';
 
 		foreach ($menu as $ind => $mitem) {
 			if (isset($mitem[5]) && $mitem[5] == 'menu-posts-'.self::$o->core_post_type) {
@@ -280,7 +280,7 @@ class qsot_post_type {
 	}
 
 	public static function patch_menu_second_hack() {
-		global $parent_file;
+		$parent_file='';
 
 		if ($parent_file == 'edit.php?post_type='.self::$o->core_post_type) $parent_file = add_query_arg(array('post_parent' => 0), $parent_file);
 	}
@@ -296,12 +296,12 @@ class qsot_post_type {
 
 		extract($args);
 
-		$event_id = absint($event_id);
-		$with__self = !!$with__self;
-		$year__only = !!$year__only;
-		$include__only = wp_parse_id_list($include__only);
+		$event_id = absint($args['event_id']);
+		$with__self = !!args['with__self'];
+		$year__only = !!args['year__only'];
+		$include__only = wp_parse_id_list(args['include__only']);
 
-		global $wpdb;
+		$wpdb='';
 
 		$fields = array();
 		$join = array();
@@ -507,7 +507,7 @@ class qsot_post_type {
 	}
 
 	public static function post_columns_contents($column, $post_id) {
-		global $wpdb;
+		$wpdb='';
 
 		switch ($column) {
 			case 'child-event-count':
@@ -539,7 +539,7 @@ class qsot_post_type {
 	}
 
 	protected static function _count_posts() {
-		global $wpdb;
+		$wpdb='';
 
 		$return = array();
 		$res = $wpdb->get_results($wpdb->prepare('select post_parent, count(post_type) as c from '.$wpdb->posts.' where post_type = %s group by post_parent', self::$o->core_post_type));
@@ -571,17 +571,17 @@ class qsot_post_type {
 			// if we are supposed to show the synopsis, then add it
 			if ( self::$options->{'qsot-single-synopsis'} && 'no' != self::$options->{'qsot-single-synopsis'} ) {
 				// emulate that the 'current post' is actually the parent post, so that we can run the the_content filters, without an infinite recursion loop
-				$q = clone $GLOBALS['wp_query'];
-				$p = clone $GLOBALS['post'];
-				$GLOBALS['post'] = get_post( $event->post_parent );
-				setup_postdata( $GLOBALS['post'] );
+				$q = clone $wp_query;
+				$p = clone $post;
+				$post = get_post( $event->post_parent );
+				setup_postdata( $post );
 
 				// get the parent post content, and pass it through the appropriate filters for texturization
 				$content = apply_filters( 'the_content', get_the_content() );
 
 				// restore the original post
-				$GLOBALS['wp_query'] = $q;
-				$GLOBALS['post'] = $p;
+				$wp_query = $q;
+				$post = $p;
 				setup_postdata( $p );
 			}
 
@@ -626,7 +626,7 @@ class qsot_post_type {
 	}
 
 	public static function events_query_where($where, $q) {
-		global $wpdb;
+		$wpdb='';
 
 		if (isset($q->query_vars['post_parent__not_in']) && !empty($q->query_vars['post_parent__not_in'])) {
 			$ppni = $q->query_vars['post_parent__not_in'];
@@ -674,7 +674,6 @@ class qsot_post_type {
 	}
 
 	public static function events_query_orderby($orderby, $q) {
-		global $wpdb;
 
 		if (isset($q->query_vars['special_order']) && strlen($q->query_vars['special_order'])) {
 			//$orderby = preg_split('#\s*,\s*#', $orderby);
@@ -717,7 +716,7 @@ class qsot_post_type {
 
 		// use the global post if the event_id is not supplied
 		if ( ! is_numeric( $event_id ) || $event_id <= 0 )
-			$event_id = isset( $GLOBALS['post'] ) && is_object( $GLOBALS['post'] ) ? $GLOBALS['post']->ID : $event_id;
+			$event_id = isset( $post ) && is_object( $post ) ? $post->ID : $event_id;
 
 		// bail if the event id does not exist
 		if ( ! is_numeric( $event_id ) || $event_id <= 0 )
@@ -851,7 +850,7 @@ class qsot_post_type {
 		static $cache = array();
 
 		if (!isset($cache["{$order_id}"])) {
-			global $wpdb;
+			$wpdb='';
 			$q = $wpdb->prepare('select order_id from '.$wpdb->prefix.'woocommerce_order_items where order_item_id = %d', $order_item_id);
 			$cache["{$order_id}"] = (int)$wpdb->get_var($q);
 		}
@@ -1797,7 +1796,7 @@ class qsot_post_type {
 
 	// add meta boxes on the edit event pages
 	public static function core_setup_meta_boxes( $post_type ) {
-		global $post;
+	    $post='';
 
 		// some only belong on parent event edit pages
 		if ( is_object( $post ) && $post->post_parent == 0 ) {
@@ -2431,7 +2430,7 @@ class qsot_post_type {
 
 	public static function permalink_settings_page() {
 		self::_maybe_save_permalink_settings();
-		global $wp_settings_sections, $wp_settings_fields;
+		$wp_settings_sections=''; $wp_settings_fields='';
 
 		$wp_settings_sections['permalink']['opentickets-permalink'] = array(
 			'id' => 'opentickets-permalink',

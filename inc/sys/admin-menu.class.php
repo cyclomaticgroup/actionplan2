@@ -121,7 +121,7 @@ class qsot_admin_menu {
 	public static function refresh_permalinks_on_save_page_refresh() {
 		if ( isset( $_GET['refresh-permalinks'] ) ) {
 			if ( wp_verify_nonce( $_GET['refresh-permalinks'], 'refresh-now/qsot' ) ) {
-				global $wp_rewrite;
+				$wp_rewrite='';
 				flush_rewrite_rules();
 				$wp_rewrite->rewrite_rules();
 			}
@@ -130,7 +130,7 @@ class qsot_admin_menu {
 	}
 
 	public static function repair_menu_order() {
-		global $menu;
+		$menu='';
 
 		$core = apply_filters('qsot-events-core-post-types', array());
 		foreach ($core as $k => $v) {
@@ -156,7 +156,7 @@ class qsot_admin_menu {
 	// create the external links on our menu, which currently can open in a new window
 	// done this way, because currently there is no mechanism to make admin menu items open a new tab!!! wth
 	public static function external_links() {
-		global $menu, $submenu;
+		$menu=''; $submenu='';
 
 		// if out opentickets menu exists
 		if ( isset( $submenu['opentickets'] ) ) {
@@ -255,7 +255,7 @@ class qsot_admin_menu {
 	}
 
 	public static function ap_settings_page_head() {
-		global $current_tab, $current_section;
+		$current_tab=''; $current_section='';
 		require_once 'admin-settings.php';
 
 		// Include settings pages

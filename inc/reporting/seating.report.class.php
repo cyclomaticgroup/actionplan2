@@ -276,7 +276,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	// the report should define a function to get a partial list of rows to process for this report. for instance, we don't want to have one group of 1,000,000 rows, run all at once, because
 	// the memory implications on that are huge. instead we would need to run it in discreet groups of 1,000 or 10,000 rows at a time, depending on the processing involved
 	public function more_rows() {
-		global $wpdb;
+		$wpdb='';
 
 		// find a list of the valid states that are permanent states. we do not want 'reserved' seats or 'interest' seats showing here
 		$valid = array();
@@ -373,7 +373,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		if ( empty( $order_ids ) )
 			return array();
 
-		global $wpdb;
+		$wpdb='';
 		// grab the raw list of stati
 		$raw = $wpdb->get_results( 'select id, post_status from ' . $wpdb->posts . ' where id in( ' . implode( ',', $order_ids ) . ' )' );
 
@@ -387,7 +387,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 
 	// calculate the availability, based on the total number of tickets sold, subtracted from the total available
 	protected function _available() {
-		global $wpdb;
+		$wpdb='';
 
 		// valid states
 		$in = "'" . implode( "','", array_filter( array_map( 'trim', array_keys( $this->state_map ) ) ) ) . "'";
@@ -490,7 +490,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		if ( empty( $comment_ids ) )
 			return array();
 
-		global $wpdb;
+		$wpdb='';
 		// otherwise, get a list of all matched comments, and organize them by order_id
 		$raw_comments = $wpdb->get_results( 'select comment_post_id order_id, comment_content from ' . $wpdb->comments . ' where comment_id in(' . implode( ',', $comment_ids ) . ') order by comment_date asc' );
 
@@ -506,7 +506,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	protected function _get_ticket_codes( $order_item_ids ) {
 		if ( empty( $order_item_ids ) )
 			return array();
-		global $wpdb;
+		$wpdb='';
 		// get the raw list
 		$results = $wpdb->get_results( 'select * from ' . $wpdb->qsot_ticket_codes . ' where order_item_id in(' . implode( ',', $order_item_ids ) . ')' );
 
@@ -524,7 +524,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		if ( empty( $order_item_ids ) )
 			return array();
 
-		global $wpdb;
+		$wpdb='';
 		// get all the post meta for all orders
 		$all_meta = $wpdb->get_results( 'select * from ' . $wpdb->prefix . 'woocommerce_order_itemmeta where order_item_id in (' . implode( ',', $order_item_ids ) . ') order by meta_id desc' );
 

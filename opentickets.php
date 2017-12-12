@@ -276,7 +276,7 @@ class QSOT {
 
 		// if the value was not cached yet, then do so now
 		if ( false === $found || ( null === $found && false === $cache ) ) {
-			global $wpdb;
+			$wpdb='';
 
 			// find the var in the mysql settings
 			$res = $wpdb->get_row( 'show variables like "max_allowed_packet"' );
@@ -724,7 +724,7 @@ class QSOT {
 
 		// if the current value does not exist, then try to set it to the publish date of the first event
 		if ( '' == $current || ! strtotime( $current ) ) {
-			global $wpdb;
+		    $wpdb='';
 			$event_date = $wpdb->get_var( $wpdb->prepare( 'select post_date from ' . $wpdb->posts . ' where post_type = %s order by post_date asc, id asc', self::$o->core_post_type ) );
 			// if we found the date, then use it
 			if ( $event_date )
@@ -881,7 +881,7 @@ if (!function_exists('is_ajax')) {
 
 if (defined('ABSPATH') && function_exists('add_action')) {
 	if ( !function_exists('wp_set_auth_cookie') ):
-		if ( version_compare($GLOBALS['wp_version'], '4.0') < 0 ) :
+		if ( version_compare($wp_version, '4.0') < 0 ) :
 			/** @@@@@COPIED FROM pluggable.php and modified to work with our infinite login
 			 * Sets the authentication cookies based User ID.
 			 *
