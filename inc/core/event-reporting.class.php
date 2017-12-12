@@ -42,7 +42,7 @@ class qsot_reporting {
 		$url = $report->printer_friendly_url( $csv_file, $report );
 
 		// add the printer-friendly link
-		$format = ?> <a href="%s" title="%s" target="_blank">%s</a> <?php ;
+		$format = '<a href="%s" title="%s" target="_blank">%s</a>';
 		echo sprintf(
 			$format,
 			$url,
@@ -137,7 +137,6 @@ abstract class QSOT_Admin_Report {
 		ini_set( 'memory_limit', $max );
 		if ( isset( $_COOKIE, $_COOKIE['otdebug'] ) && 'opentickets' == $_COOKIE['otdebug'] ) {
 			error_reporting( E_ALL );
-			ini_set( 'display_errors', 1 );
 			ini_set( 'html_errors', 1 );
 		}
 		// if the current user does not have permissions to run the report, then bail
@@ -379,24 +378,25 @@ abstract class QSOT_Admin_Report {
 			<td>
 		<?php
 
-				$format= ?> <a href="%s" target="_blank" title="%s">%s</a> <?php ;
-
 				switch ( $col ) {
 					// link the order id if present
 					case 'order_id':
-						echo $row[ $col ] > 0 ? sprintf($format, get_edit_post_link( $value ), esc_attr( __( 'Edit order', 'opentickets-community-edition' ) ), $value ) : $value;
+                        $format= '<a href="%s" target="_blank" title="%s">%s</a>';
+					    $strOrderId = $row[ $col ] > 0 ? sprintf($format, get_edit_post_link( $value ), esc_attr( __( 'Edit order', 'opentickets-community-edition' ) ), $value ) : $value;
+						echo $strOrderId;
 					break;
 
 					// default the purchaser name to the cart id
 					case 'purchaser':
-						$format = ?> <span title="%s">%s</span> <?php ;
-						echo ! empty( $value )
-								? $value
-								: sprintf(
-									$format,
-									esc_attr( sprintf( __( 'Cart Session ID: %s', 'opentickets-community-edition' ), $row['_raw']->session_customer_id ) ),
-									__( 'Temporary Cart', 'opentickets-community-edition' )
-								);
+					    $strPur = ! empty( $value )
+                            ? $value
+                            : sprintf(
+                                $format,
+                                esc_attr( sprintf( __( 'Cart Session ID: %s', 'opentickets-community-edition' ), $row['_raw']->session_customer_id ) ),
+                                __( 'Temporary Cart', 'opentickets-community-edition' )
+                            );
+						$format = '<span title="%s">'. $strPur .'</span>';
+
 					break;
 					// allow a filter on all other columns
 					default:
