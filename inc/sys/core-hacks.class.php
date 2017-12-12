@@ -538,11 +538,14 @@ class qsot_core_hacks
 
             echo  htmlspecialchars('<li rel="' . $comment_id . '" class="note ');
             if ($is_customer_note) echo 'customer-note';
-            echo '"><div class="note_content">';
+            $div1 = '<div class="note_content">';
+            echo $div1;
             echo htmlspecialchars(wpautop(wptexturize($note)));
-            echo htmlspecialchars('</div><p class="meta">');
+            $div2 = htmlspecialchars('</div><p class="meta">');
+            echo $div2;
             echo htmlspecialchars('(' . apply_filters('woocommerce_get_order_note_type', 'private', get_comment($comment_id)) . ')');
-            echo htmlspecialchars('<a href="#" class="delete_note">' . __('Delete note', 'opentickets-community-edition') . '</a>');
+            $href = htmlspecialchars('<a href="#" class="delete_note">' . __('Delete note', 'opentickets-community-edition') . '</a>');
+            echo $href;
             ?>
             </p>
             </li>
