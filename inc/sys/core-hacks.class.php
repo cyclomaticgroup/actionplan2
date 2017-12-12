@@ -523,13 +523,13 @@ class qsot_core_hacks
             $comment_id = $order->add_order_note($note, $is_customer_note);
             do_action('woocommerce_ajax_save_order_note', $comment_id, $note_type, $note, $order);
 
-            echo '<li rel="' . $comment_id . '" class="note ';
+            echo  htmlspecialchars('<li rel="' . $comment_id . '" class="note ');
             if ($is_customer_note) echo 'customer-note';
             echo '"><div class="note_content">';
-            echo wpautop(wptexturize($note));
-            echo '</div><p class="meta">';
-            echo '(' . apply_filters('woocommerce_get_order_note_type', 'private', get_comment($comment_id)) . ')';
-            echo '<a href="#" class="delete_note">' . __('Delete note', 'opentickets-community-edition') . '</a>';
+            echo htmlspecialchars(wpautop(wptexturize($note)));
+            echo htmlspecialchars('</div><p class="meta">');
+            echo htmlspecialchars('(' . apply_filters('woocommerce_get_order_note_type', 'private', get_comment($comment_id)) . ')');
+            echo htmlspecialchars('<a href="#" class="delete_note">' . __('Delete note', 'opentickets-community-edition') . '</a>');
             echo '</p>';
             echo '</li>';
 
