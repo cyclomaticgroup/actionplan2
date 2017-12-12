@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 class qsot_admin_menu {
 	protected static $o = array();
@@ -126,7 +126,6 @@ class qsot_admin_menu {
 				$wp_rewrite->rewrite_rules();
 			}
 			wp_safe_redirect( remove_query_arg( array( 'refresh-permalinks' ) ) );
-			exit;
 		}
 	}
 

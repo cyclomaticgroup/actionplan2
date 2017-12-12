@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 require_once $GLOBALS['woocommerce']->plugin_path() . '/includes/admin/class-wc-admin-settings.php';
 
@@ -57,9 +57,9 @@ class qsot_admin_settings extends WC_Admin_Settings {
 		global $current_section, $current_tab;
 
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'qsot-settings' ) )
-			die( __( 'Action failed. Please refresh the page and retry.','opentickets-community-edition' ) );
+            trigger_error("Action failed. Please refresh the page and retry.", E_USER_NOTICE);
 
-		// Trigger actions
+        // Trigger actions
 		do_action( 'qsot_settings_save_' . $current_tab );
 		do_action( 'qsot_update_options_' . $current_tab );
 		do_action( 'qsot_update_options' );
@@ -70,7 +70,6 @@ class qsot_admin_settings extends WC_Admin_Settings {
 		do_action( 'qsot_settings_saved' );
 
 		wp_safe_redirect( apply_filters( 'qsot-settings-save-redirect', add_query_arg( array( 'updated' => 1 ) ), $current_tab ) );
-		exit;
 	}
 
 	// handle the output of the qTranslate LSB fields on the settings page

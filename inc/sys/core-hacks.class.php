@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 class qsot_core_hacks {
 	protected static $o = null;
@@ -99,7 +99,6 @@ class qsot_core_hacks {
 				<?php echo $email->get_content(); ?>
 			</body>
 		</html><?php
-		exit;
 	}
 
 	public static function add_no_processing_option($list) {
@@ -163,9 +162,6 @@ class qsot_core_hacks {
 		//include( trailingslashit($woocommerce->plugin_path).'admin/post-types/writepanels/order-fee-html.php' );
 		if ( $template = QSOT_Templates::locate_woo_template( 'post-types/meta-boxes/views/html-order-fee.php', 'admin' ) )
 			include( $template );
-
-		// Quit out
-		die();
 	}
 
 	// copied from woocommerce/woocommerce-ajax.php
@@ -178,12 +174,13 @@ class qsot_core_hacks {
 
 		// Find the item
 		if ( ! is_numeric( $item_to_add ) )
-			die();
+			trigger_error("Is not a number!", E_USER_ERROR);
 
-		$post = get_post( $item_to_add );
+
+        $post = get_post( $item_to_add );
 
 		if ( ! $post || ( $post->post_type !== 'product' && $post->post_type !== 'product_variation' ) )
-			die();
+            trigger_error("POST Request Invalid", E_USER_NOTICE);
 
 		$_product = get_product( $post->ID );
 
@@ -229,9 +226,6 @@ class qsot_core_hacks {
 		//include( 'admin/post-types/writepanels/order-item-html.php' );
 		if ( $template = QSOT_Templates::locate_woo_template( 'post-types/meta-boxes/views/html-order-item.php', 'admin' ) )
 			include $template;
-
-		// Quit out
-		die();
 	}
 	// copied from woocommerce/admin/post-types/writepanels/writepanel-order_data.php
 	/**
@@ -494,9 +488,6 @@ class qsot_core_hacks {
 			echo '</li>';
 
 		}
-
-		// Quit out
-		die();
 	}
 
 	public static function get_order_note_type($type, $note) {
@@ -519,9 +510,9 @@ class qsot_core_hacks {
 		$term = urldecode( stripslashes( strip_tags( $_GET['term'] ) ) );
 
 		if ( empty( $term ) )
-			die();
+            trigger_error("Empty terms!", E_USER_NOTICE);
 
-		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'Guest', 'opentickets-community-edition' );
+        $default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'Guest', 'opentickets-community-edition' );
 
 		$found_customers = array( '' => $default );
 
@@ -578,7 +569,6 @@ class qsot_core_hacks {
 		}
 
 		echo json_encode( $found_customers );
-		die();
 	}
 
 	public static function or_display_name_user_query(&$query) {

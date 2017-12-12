@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 // controls the core functionality of the evet area post type
 class QSOT_Post_Type_Event_Area {
@@ -1114,7 +1114,6 @@ class QSOT_Post_Type_Event_Area {
 			// notify externals of the change
 			do_action( 'qsot-confirmed-ticket', $order, $item, $item_id, $result );
 		}
-		die( var_dump( 'done' ));
 	}
 
 	// when creating a new order, we need to update the related ticket rows with the new order id

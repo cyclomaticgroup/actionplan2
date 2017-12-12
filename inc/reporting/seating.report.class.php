@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 if ( ! class_exists( 'QSOT_New_Seating_Report' ) ):
 
@@ -130,12 +130,9 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		// if the parent_id changed, then just pop a new form
 		if ( isset( $_REQUEST['reload-form'] ) || ! isset( $_REQUEST['parent_event_id'], $_REQUEST['last_parent_id'] ) || empty( $_REQUEST['parent_event_id'] ) || $_REQUEST['parent_event_id'] != $_REQUEST['last_parent_id'] ) {
 			$this->_form();
-			exit;
 		}
-
 		// otherwise, pop the results table
 		$this->_results();
-		exit;
 	}
 
 	// augment the printerfriendly url

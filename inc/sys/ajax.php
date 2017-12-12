@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 // load the ajax handler class. performs most authentication and request validation for registered ajax requests
 class QSOT_Ajax {
@@ -61,7 +61,6 @@ class QSOT_Ajax {
 	public function handle_request() {
 		// figure out if there is an sa in the request. if not, bail
 		if ( ! ( $sa = $_REQUEST['sa'] ) || ! isset( $this->by_sa[ $sa ] ) )
-			//die(var_dump(1, $sa, $this->by_sa));
 			return;
 
 		$bypass_nonce = false;

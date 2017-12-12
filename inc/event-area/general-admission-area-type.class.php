@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 // class to handle the basic general admission event area type
 class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
@@ -399,7 +399,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 			'quantity' => $item['quantity'],
 			'state' => $stati['r'][0],
 		) );
-		//die(var_dump( $res ));
 
 		// remove the item from the remove contents table, so that it cannot be 'restored'. we do this because restoring could happen after the available ticket has been purchased elsewhere
 		// do this last so that it is not removed before other area types have a chance to test it

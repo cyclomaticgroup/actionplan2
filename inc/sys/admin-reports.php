@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 class qsot_admin_settings {
 	private $start_date;
@@ -31,7 +31,6 @@ class qsot_admin_settings {
 				if ( isset( $report['pf_function'] ) && is_callable( $report['pf_function'] ) ) {
 					// call it
 					call_user_func( $report['pf_function'] );
-					exit;
 				}
 			}
 		}

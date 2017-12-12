@@ -1,4 +1,4 @@
-<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) die( header( 'Location: /') );
+<?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 if (!class_exists('QSOT')):
 
@@ -119,7 +119,6 @@ class QSOT {
 		setcookie( 'ot-deactivate', '', 1, '/' );
 
 		wp_safe_redirect( add_query_arg( array( 'updated' => 1 ) ) );
-		exit;
 	}
 
 	// add the settings page link to the plugins page
