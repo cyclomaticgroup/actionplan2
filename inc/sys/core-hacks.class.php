@@ -633,7 +633,7 @@ class qsot_core_hacks
         echo json_encode($found_customers);
     }
 
-    public static function or_display_name_user_query(&$query)
+    /*public static function or_display_name_user_query(&$query)
     {
         if (!isset($_GET['term'], $_REQUEST['s'])) return;
         global $wpdb;
@@ -641,6 +641,25 @@ class qsot_core_hacks
         $term = empty($term) && is_admin() ? preg_replace('#\s+#', '%', urldecode(stripslashes(strip_tags($_REQUEST['s'])))) : $term;
         if (!empty($term)) $query->query_where = preg_replace('#^(.*)(where 1=1 and \()(.*)#si', '\1\2' . $wpdb->prepare('display_name like %s or ', '%' . $term . '%') . '\3', $query->query_where);
         $query->query_orderby = ' GROUP BY ' . $wpdb->users . '.id ' . $query->query_orderby;
+    }*/
+
+    public static function or_display_name_user_query(&$query) {
+        if (!isset($_GET['term'], $_REQUEST['s'])) return;
+        global $wpdb;
+        $term = preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_GET['term'] ) ) ));
+        $term = empty($term) && is_admin() ? preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_REQUEST['s'] ) ) )) : $term;
+        if (!empty($term))
+            $query->query_where = self::queryTerm($query, $wpdb, $term);
+        $query->query_orderby = ' GROUP BY '.$wpdb->users.'.id '.$query->query_orderby;
+    }
+
+    private static function queryTerm(&$query, $wpdb, $term)
+    {
+        $pattern = '#^(.*)(where 1=1 and \()(.*)#si';
+        $replacement = '\1\2';
+        $prep = $wpdb->prepare('display_name like %s or ', '%' . $term . '%');
+        $qwhere = $query->query_where;
+        return preg_replace($pattern, $replacement . $prep. '\3', $qwhere);
     }
 
     public static function save_page($post_id, $post)
