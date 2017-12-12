@@ -680,18 +680,20 @@ class QSOT_Post_Type_Event_Area {
 	public function mb_render_event_area_type( $post ) {
 		// get the current value
 		$current = $this->event_area_type_from_event_area( $post );
-
+		$format = ?> <p>%s</p> <?php
 		// if there was a problem finding the current type, then display the error
 		if ( is_wp_error( $current ) ) {
 			foreach ( $current->get_error_codes() as $code )
 				foreach ( $current->get_error_messages( $code ) as $msg )
-					echo sprintf( '<p>%s</p>', force_balance_tags( $msg ) );
+					echo sprintf( $format , force_balance_tags( $msg ) );
 			return;
 		}
 
 		// if there is no current type, bail because something is wrong
 		if ( empty( $current ) ) {
-			echo '<p>' . __( 'There are no registered event area types.', 'opentickets-community-edition' ) . '</p>';
+			?>
+			<p><?php echo  __( 'There are no registered event area types.', 'opentickets-community-edition' ) ?> </p>
+<?php
 			return;
 		}
 
@@ -860,8 +862,9 @@ class QSOT_Post_Type_Event_Area {
 					?>
 
 					<div class="info">
+						<?php $format = ?> <a rel="edit-event" target="_blank" href="%s">%s</a>
 						<strong><?php _e( 'Event:', 'opentickets-community-edition' ) ?></strong>
-						<?php echo sprintf( '<a rel="edit-event" target="_blank" href="%s">%s</a>', get_edit_post_link( $event->ID ), apply_filters( 'the_title', $event->post_title, $event->ID ) ) ?>
+						<?php echo sprintf( $format, get_edit_post_link( $event->ID ), apply_filters( 'the_title', $event->post_title, $event->ID ) ) ?>
 					</div>
 
 					<?php $area_type->order_item_display( $item, $product, $event ) ?>

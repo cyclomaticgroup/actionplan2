@@ -244,12 +244,13 @@ class qsot_post_type {
 	}
 
 	public static function add_event_name_to_emails($item_id, $item, $order) {
+		$format = ?> <br/><small><strong> <?php ;
 		if (!isset($item['event_id']) || empty($item['event_id'])) return;
 		$event = apply_filters('qsot-get-event', false, $item['event_id']);
 		if (!is_object($event)) return;
 
 		echo sprintf(
-			'<br/><small><strong>' . __( 'Event', 'opentickets-community-edition' ) . '</strong>: <a class="event-link" href="%s" target="_blank" title="%s">%s</a></small>',
+			$format . __( 'Event', 'opentickets-community-edition' ) . '</strong>: <a class="event-link" href="%s" target="_blank" title="%s">%s</a></small>',
 			get_permalink( $event->ID ),
 			__('View this event','opentickets-community-edition'),
 			apply_filters( 'the_title', $event->post_title, $event->ID )

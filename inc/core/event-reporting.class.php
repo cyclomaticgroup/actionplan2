@@ -42,8 +42,9 @@ class qsot_reporting {
 		$url = $report->printer_friendly_url( $csv_file, $report );
 
 		// add the printer-friendly link
+		$format = ?> <a href="%s" title="%s" target="_blank">%s</a> <?php ;
 		echo sprintf(
-			' | <a href="%s" title="%s" target="_blank">%s</a>',
+			$format,
 			$url,
 			__( 'View a printer-friendly version of this report.', 'opentickets-community-edition' ),
 			__( 'Printer-Friendly Report', 'opentickets-community-edition' )
@@ -317,7 +318,9 @@ abstract class QSOT_Admin_Report {
 		// if no html rows were printed, then print a row indicating that
 		if ( empty( $all_html_rows ) ) {
 			$columns = count( $this->html_report_columns() );
-			echo '<tr><td colspan="' . $columns . '">' . __( 'There are no tickts sold for this event yet.', 'opentickets-community-edition' ) . '</td></tr>';
+			?>
+		<tr><td colspan="<?php $columns ?> "><?php echo __( 'There are no tickts sold for this event yet.', 'opentickets-community-edition' )?></td></tr>
+	<?php
 		}
 	}
 
@@ -367,38 +370,50 @@ abstract class QSOT_Admin_Report {
 
 		// if there is a row to display, the do os now
 		if ( is_array( $data ) && count( $data ) == $cnt ) {
-			echo '<tr>';
+			?>
+			<tr>
+		<?php
 
 			foreach ( $data as $col => $value ) {
-				echo '<td>';
+		?>
+			<td>
+		<?php
+
+				$format= ?> <a href="%s" target="_blank" title="%s">%s</a> <?php ;
 
 				switch ( $col ) {
 					// link the order id if present
 					case 'order_id':
-						echo $row[ $col ] > 0 ? sprintf( '<a href="%s" target="_blank" title="%s">%s</a>', get_edit_post_link( $value ), esc_attr( __( 'Edit order', 'opentickets-community-edition' ) ), $value ) : $value;
+						echo $row[ $col ] > 0 ? sprintf($format, get_edit_post_link( $value ), esc_attr( __( 'Edit order', 'opentickets-community-edition' ) ), $value ) : $value;
 					break;
 
 					// default the purchaser name to the cart id
 					case 'purchaser':
+						$format = ?> <span title="%s">%s</span> <?php ;
 						echo ! empty( $value )
 								? $value
 								: sprintf(
-									'<span title="%s">%s</span>',
+									$format,
 									esc_attr( sprintf( __( 'Cart Session ID: %s', 'opentickets-community-edition' ), $row['_raw']->session_customer_id ) ),
 									__( 'Temporary Cart', 'opentickets-community-edition' )
 								);
 					break;
-
 					// allow a filter on all other columns
 					default:
 						echo apply_filters( 'qsot-' . $this->slug . '-report-column-' . $col . '-value', '' == strval( $value ) ? '&nbsp;' : force_balance_tags( strval( $value ) ), $data, $row );
 					break;
 				}
 
-				echo '</td>';
+				?>
+
+				</td>
+		<?php
 			}
 
-			echo '</tr>';
+			?>
+
+				</tr>
+		<?php
 
 			return 1;
 		}

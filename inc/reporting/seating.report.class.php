@@ -410,10 +410,14 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		$columns = $this->html_report_columns();
 
 		// print an empty row, making sure to label and quantify it as an availbility count
-		echo '<tr>';
+		?>
+		<tr>
+<?php
 
 		foreach ( $columns as $col => $label ) {
-			echo '<td>';
+			?>
+		<td>
+<?php
 
 			switch ( $col ) {
 				case 'purchaser': echo __( 'AVAILABLE', 'opentickets-community-edition' ); break;
@@ -421,10 +425,14 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 				default: echo '-'; break;
 			}
 
-			echo '</td>';
+			?>
+		</td>
+<?php
 		}
 
-		echo '</tr>';
+		?>
+		</tr>
+<?php
 
 		do_action( 'qsot-' . $this->slug . '-report-before-html-footer', $all_html_rows, $this );
 	}

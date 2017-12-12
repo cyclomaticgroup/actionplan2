@@ -308,8 +308,9 @@ class qsot_core_hacks
                     $post_id = $wpdb->get_var(self::getFastPrep($wpdb, $item));
 
                     $link = $post_id ? admin_url('post.php?post=' . $post_id . '&action=edit') : admin_url('edit.php?s=' . esc_url($item['name']) . '&post_status=all&post_type=shop_coupon');
-
-                    echo '<li class="tips code" data-tip="' . esc_attr(woocommerce_price($item['discount_amount'])) . '"><a href="' . $link . '"><span>' . esc_html($item['name']) . '</span></a></li>';
+                ?>
+                    <li class="tips code" data-tip=" <?php echo esc_attr(woocommerce_price( $item['discount_amount'] ) ) ?> "><a href="<?php echo $link ?> "><span><?php echo esc_html( $item['name'] ) ?></span></a></li>
+                <?php
 
                 }
                 ?>
@@ -362,16 +363,22 @@ class qsot_core_hacks
                                 else
                                     $value = $method->id;
 
-                                echo '<option value="' . esc_attr($value) . '" ' . selected($chosen_method == $value, true, false) . '>' . esc_html($method->get_title()) . '</option>';
+        ?>
+                                        <option value=" <?php echo esc_attr( $value ) . '" ' . selected( $chosen_method == $value, true, false ) ?> "><?php echo esc_html( $method->get_title() ) ?></option>;
+        <?php
                                 if ($chosen_method == $value)
                                     $found_method = true;
                             }
                         }
 
                         if (!$found_method && !empty($chosen_method)) {
-                            echo '<option value="' . esc_attr($chosen_method) . '" selected="selected">' . __('Other', 'opentickets-community-edition') . '</option>';
+                            ?>
+                                    <option value="<?php echo esc_attr( $chosen_method ) ?>" selected="selected"><?php echo __( 'Other','opentickets-community-edition' ) ?></option>
+        <?php
                         } else {
-                            echo '<option value="other">' . __('Other', 'opentickets-community-edition') . '</option>';
+                            ?>
+                                    <option value="other"><?php echo  __( 'Other','opentickets-community-edition' ) ?></option>
+        <?php
                         }
                         ?>
                     </select>
@@ -473,7 +480,9 @@ class qsot_core_hacks
                         if ($woocommerce->payment_gateways()) {
                             foreach ($woocommerce->payment_gateways->payment_gateways() as $gateway) {
                                 if ($gateway->enabled == "yes") {
-                                    echo '<option value="' . esc_attr($gateway->id) . '" ' . selected($chosen_method, $gateway->id, false) . '>' . esc_html($gateway->get_title()) . '</option>';
+                                    ?>
+                                        <option value="<?php echo esc_attr( $gateway->id ) . '" ' . selected( $chosen_method, $gateway->id, false ) ?> "><?php echo esc_html( $gateway->get_title() ) ?></option>
+        <?php
                                     if ($chosen_method == $gateway->id)
                                         $found_method = true;
                                 }
@@ -481,9 +490,13 @@ class qsot_core_hacks
                         }
 
                         if (!$found_method && !empty($chosen_method)) {
-                            echo '<option value="' . esc_attr($chosen_method) . '" selected="selected">' . __('Other', 'opentickets-community-edition') . '</option>';
+                            ?>
+                                <option value="<?php echo esc_attr( $chosen_method ) ?>" selected="selected"><?php echo __( 'Other','opentickets-community-edition' ) ?></option>
+        <?php
                         } else {
-                            echo '<option value="other">' . __('Other', 'opentickets-community-edition') . '</option>';
+                            ?>
+                                <option value="other"><?php echo __( 'Other','opentickets-community-edition' )?></option>
+        <?php
                         }
                         ?>
                     </select>
@@ -530,9 +543,10 @@ class qsot_core_hacks
             echo htmlspecialchars('</div><p class="meta">');
             echo htmlspecialchars('(' . apply_filters('woocommerce_get_order_note_type', 'private', get_comment($comment_id)) . ')');
             echo htmlspecialchars('<a href="#" class="delete_note">' . __('Delete note', 'opentickets-community-edition') . '</a>');
-            echo '</p>';
-            echo '</li>';
-
+            ?>
+            </p>
+            </li>
+            <?php
         }
     }
 
@@ -692,7 +706,9 @@ class qsot_core_hacks
             $selected = " selected='selected'";
         else
             $selected = '';
-            echo "\n\t<option value='" . $templates[$template] . "' $selected>$template</option>";
+            ?>
+        <option value=<?php echo $templates[$template] ?> <?php echo $selected ?> ><?php echo $template ?></option>
+    <?php
         endforeach;
     }
 
@@ -737,11 +753,13 @@ class qsot_core_hacks
     {
         // only allow updating the user's billing information if we require users to signup, creating user accounts
         if (get_option('woocommerce_enable_guest_checkout') != 'yes') {
-            echo '<div class="edit_address"><p class="form-field _billing_sync_customer_address">'
-                . '<input type="hidden" name="_billing_sync_customer_address" value="0" />'
-                . '<input type="checkbox" name="_billing_sync_customer_address" value="1" class="billing-sync-customer-address" />'
-                . '<span for="_billing_sync_customer_address">Update Customer Address</span>'
-                . '</p></div>';
+            ?>
+            <div class="edit_address"><p class="form-field _billing_sync_customer_address">
+            <input type="hidden" name="_billing_sync_customer_address" value="0" />
+            <input type="checkbox" name="_billing_sync_customer_address" value="1" class="billing-sync-customer-address" />
+            <span for="_billing_sync_customer_address">Update Customer Address</span>
+            </p></div>
+    <?php
         }
     }
 

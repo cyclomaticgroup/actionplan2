@@ -95,20 +95,28 @@ class qsot_frontend_calendar {
 			// core WP themes
 			case 'twentytwelve':
 			case 'twentythirteen':
-				echo '</div></div>';
+?>
+				</div></div>
+<?php
 			break;
 
 			case 'twentyfourteen':
-				echo '</div></div></div></div>';
+?>
+				</div></div></div></div>
+<?php
 			break;
 
 			case 'twentyfifteen':
-				echo '</main></div>';
+				?>
+				</main></div>
+<?php
 			break;
 
 			// canvas, OT perferred theme
 			case 'canvas':
-				echo '</section></div></div>';
+				?>
+				</section></div></div>
+<?php
 			break;
 
 			// all other themes
@@ -116,7 +124,9 @@ class qsot_frontend_calendar {
 				if ( has_action( 'qsot-after-calendar-content-' . $name ) )
 					do_action( 'qsot-after-calendar-content-' . $name, self::$current_theme );
 				else
-				echo '</div></div></div></div></div></div>';
+				?>
+				</div></div></div></div></div></div>
+<?php
 			break;
 		}
 	}
