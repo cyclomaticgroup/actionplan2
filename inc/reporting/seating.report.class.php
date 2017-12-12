@@ -228,7 +228,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 
 				<label for="parent_event_id"><?php _e( 'Event:', 'opentickets-community-edition' ) ?></label>
 				<div style="vertical-align:middle; width:100%; max-width:450px; display:inline-block !important"><select class="use-select2" style="width:100%; display:none;" name="parent_event_id" id="parent_event_id" data-minchar="0" 
-						data-init-placeholder="<?php echo esc_attr( __( 'Select an Event', 'opentickets-community-edition' ) ) ?>" data-filter-by="#year" data-array="<?php echo esc_attr( @json_encode( $parent_data ) ) ?>">
+						data-init-placeholder="<?php echo esc_attr( __( 'Select an Event', 'opentickets-community-edition' ) ) ?>" data-filter-by="#year" data-array="<?php echo esc_attr( json_encode( $parent_data ) ) ?>">
 					<?php if ( is_array( $selected_parent ) && isset( $selected_parent['id'] ) ): ?>
 						<option value="<?php echo esc_attr( $selected_parent['id'] ) ?>"><?php echo force_balance_tags( $selected_parent['text'] ) ?></option>
 					<?php endif; ?>
@@ -243,7 +243,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 				<div class="extended-form" style="padding-top:0.3em;">
 					<label for="event_id"><?php _e( 'Showing:', 'opentickets-community-edition' ) ?></label>
 					<div style="width:100%; max-width:450px; display:inline-block !important"><select class="use-select2" style="width:100%; display:none;" name="event_id" id="event_id" data-minchar="0" 
-							data-init-placeholder="<?php echo esc_attr( __( 'Select an Event', 'opentickets-community-edition' ) ) ?>" data-array="<?php echo esc_attr( @json_encode( $child_data ) ) ?>">
+							data-init-placeholder="<?php echo esc_attr( __( 'Select an Event', 'opentickets-community-edition' ) ) ?>" data-array="<?php echo esc_attr( json_encode( $child_data ) ) ?>">
 					</select></div>
 
 					<input type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Show Report', 'opentickets-community-edition' ) ) ?>" />

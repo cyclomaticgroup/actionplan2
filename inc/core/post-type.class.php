@@ -571,7 +571,8 @@ class qsot_post_type {
 			// if we are supposed to show the synopsis, then add it
 			if ( self::$options->{'qsot-single-synopsis'} && 'no' != self::$options->{'qsot-single-synopsis'} ) {
 				// emulate that the 'current post' is actually the parent post, so that we can run the the_content filters, without an infinite recursion loop
-				$q = clone $wp_query;
+
+                $q = clone $wp_query;
 				$p = clone $post;
 				$post = get_post( $event->post_parent );
 				setup_postdata( $post );
@@ -1097,7 +1098,7 @@ class qsot_post_type {
 		) );
 
 		// use the loacalize script trick to send misc settings to the event ui script, based on the current post, and allow sub/external plugins to modify this
-		@list( $events, $first ) = self::_child_event_settings($post_id);
+		list( $events, $first ) = self::_child_event_settings($post_id);
 		wp_localize_script('qsot-events-admin-edit-page', '_qsot_settings', apply_filters('qsot-event-admin-edit-page-settings', array(
 			'first' => $first,
 			'events' => $events, // all children events
@@ -1434,7 +1435,7 @@ class qsot_post_type {
 		unset( $data['_qsot_event_settings']['count'] );
 		// expand the json data
 		foreach ( $data['_qsot_event_settings'] as $ind => $item )
-			$data['_qsot_event_settings'][ $ind ] = @json_decode( stripslashes( $item ) );
+			$data['_qsot_event_settings'][ $ind ] = json_decode( stripslashes( $item ) );
 
 		// patch to prevent simple fields from overwriting child event field data
 		if ( isset( $_POST['simple_fields_nonce'] ) ) {
@@ -1471,7 +1472,7 @@ class qsot_post_type {
 		// and properly group them for possible later processing
 		foreach ( $data['_qsot_event_settings'] as $item ) {
 			// expand the settings
-			$tmp = ! is_scalar( $item ) ? $item : @json_decode( stripslashes( $item ) );
+			$tmp = ! is_scalar( $item ) ? $item : json_decode( stripslashes( $item ) );
 
 			// update the timestamps to be non-dst for storage
 			// handles situation where site is in EST and local computer setting up event is in PST
@@ -1734,7 +1735,7 @@ class qsot_post_type {
 		$current_end = get_post_meta( $post_id, self::$o->{'meta_key.end'}, true );
 
 		// calculate the real start and end times over all child events
-		@list( $actual_start, $actual_end ) = apply_filters( 'qsot-event-date-range', array(), array( 'event_id' => $post_id ) );
+		list( $actual_start, $actual_end ) = apply_filters( 'qsot-event-date-range', array(), array( 'event_id' => $post_id ) );
 
 		$submit_start_date = $submit_end_date = array();
 		if ( ! $at_least_one_new ) {
@@ -1784,7 +1785,7 @@ class qsot_post_type {
 
 			// cycle through the map. deterine the appropriate value to save. then update the setting as such
 			foreach ( $map as $k => $pair ) {
-				@list( $meta_key, $option_name ) = $pair;
+				list( $meta_key, $option_name ) = $pair;
 				// figure out the appropriate value
 				$value = isset( $_POST[ $meta_key ] ) ? $_POST[ $meta_key ] : ''; //( ! empty( $option_name ) ?  apply_filters( 'qsot-get-option-value', '', $option_name ) : '' );
 
@@ -1995,7 +1996,7 @@ class qsot_post_type {
 			$options[ $k ] = $value;
 		}
 
-		@list( $options['hard_stop_date'], $options['hard_stop_time'] ) = empty( $options['hard_stop'] ) ? array( '', '' ) : explode( ' ', $options['hard_stop'], 2 );
+		list( $options['hard_stop_date'], $options['hard_stop_time'] ) = empty( $options['hard_stop'] ) ? array( '', '' ) : explode( ' ', $options['hard_stop'], 2 );
 
 		?>
 			<div class="qsot-mb">

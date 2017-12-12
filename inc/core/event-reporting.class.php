@@ -483,7 +483,7 @@ abstract class QSOT_Admin_Report {
 
 	// generate a filename for the csv for this report
 	protected function _csv_filename( $id='', $id_prefix='' ) {
-		return 'report-' . $this->slug . ( $id ? '-' . $id_prefix . $id : '' ) . '-' . wp_create_nonce( 'run-report-' . @json_encode( $_REQUEST ) ) . '.csv';
+		return 'report-' . $this->slug . ( $id ? '-' . $id_prefix . $id : '' ) . '-' . wp_create_nonce( 'run-report-' . json_encode( $_REQUEST ) ) . '.csv';
 	}
 
 	// add the header row to the csv
@@ -536,22 +536,22 @@ abstract class QSOT_Admin_Report {
 		$u['basedir'] = trailingslashit( $u['basedir'] );
 
 		// see if the report cache path already exists. if so, use it in a response now
-		if ( @file_exists( $u['basedir'] . 'report-cache/' ) && is_dir( $u['basedir'] . 'report-cache/' ) && is_writable( $u['basedir'] . 'report-cache/' ) )
+		if ( file_exists( $u['basedir'] . 'report-cache/' ) && is_dir( $u['basedir'] . 'report-cache/' ) && is_writable( $u['basedir'] . 'report-cache/' ) )
 			return array(
 				'path' => $u['basedir'] . 'report-cache/',
 				'url' => $u['baseurl'] . 'report-cache/',
 			);
 		// if the dir exists, but is not writable, then bail with an appropriate error
-		elseif ( @file_exists( $u['basedir'] . 'report-cache/' ) && is_dir( $u['basedir'] . 'report-cache/' ) && ! is_writable( $u['basedir'] . 'report-cache/' ) )
+		elseif ( file_exists( $u['basedir'] . 'report-cache/' ) && is_dir( $u['basedir'] . 'report-cache/' ) && ! is_writable( $u['basedir'] . 'report-cache/' ) )
 			return new WP_Error(
 				'file_permissions',
 				sprintf( __( 'The report cache directory [%s] is not writable. Please update the file permissions to allow writing.', 'opentickets-community-edition' ), $u['basedir'] . 'report-cache/' )
 			);
 		// if the file exists, but is not a directory, then bail with an appropriate error
-		elseif ( @file_exists( $u['basedir'] . 'report-cache' ) && ! is_dir( $u['basedir'] . 'report-cache' ) )
+		elseif ( file_exists( $u['basedir'] . 'report-cache' ) && ! is_dir( $u['basedir'] . 'report-cache' ) )
 			return new WP_Error( 'wrong_file_type', sprintf( __( 'Please remove (or move) the file [%s] and run the report again.', 'opentickets-community-edition' ), $u['basedir'] . 'report-cache' ) );
 		// the file does not exist, and we cannot create it
-		elseif ( ! @file_exists( $u['basedir'] . 'report-cache/' ) && ! is_writable( $u['basedir'] ) )
+		elseif ( ! file_exists( $u['basedir'] . 'report-cache/' ) && ! is_writable( $u['basedir'] ) )
 			return new WP_Error( 'file_permissions', __( 'Could not create a new directory inside your uploads folder. Update the file permissions to allow writing.', 'opentickets-community-edition' ) );
 
 		// at the point the file does not exist, and we have write permissions to create it. do so now. if that fails, error out

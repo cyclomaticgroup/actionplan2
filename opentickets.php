@@ -706,7 +706,7 @@ class QSOT {
 
 		// if we ar not in debug mode
 		if ( ! WP_DEBUG ) {
-			if ( ! @file_exists( $file ) || ! is_readable( $file ) || is_dir( $file ) )
+			if ( ! file_exists( $file ) || ! is_readable( $file ) || is_dir( $file ) )
 				throw new Exception( sprintf( __( 'Could not find the needed library %s, for use in %s.', 'opentickets-community-edition' ), $lib_name, $context ) );
 		// if we ARE in debug mode
 		} else {
