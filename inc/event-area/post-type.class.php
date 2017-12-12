@@ -995,9 +995,10 @@ class QSOT_Post_Type_Event_Area {
 
 		// construct the stati part of the query
 		$stati_q = array();
-		foreach ( $stati as $slug => $interval )
-			$stati_q[] = $wpdb->prepare( '(state = %s and since < NOW() - INTERVAL %d SECOND)', $slug, $interval );
-		$q .= '(' . implode( ' or ', $stati_q ) . ')';
+        $queryF = '(state = %s and since < NOW() - INTERVAL %d SECOND)';
+        foreach ( $stati as $slug => $interval )
+            $stati_q = $this->addFastPrep($stati_q, $wpdb, $queryF, $slug, $interval);
+        $q .= '(' . implode( ' or ', $stati_q ) . ')';
 
 		// if the event_id was specified, then use it
 		if ( '' !== $args['event_id'] && null !== $args['event_id'] )
@@ -1029,7 +1030,7 @@ class QSOT_Post_Type_Event_Area {
       // aggregate a partial where statement, that specifically identifies this row, using all fields for positive id
       $fields = array();
       foreach ( $lock as $k => $v )
-        $fields[] = $wpdb->prepare( $k.' = %s', $v );
+          $fields = $this->addFastPrep($fields, $wpdb, $k.' = %s', $v);
       if ( ! empty( $fields ) )
         $wheres[] = implode( ' and ', $fields );
     }
@@ -1751,6 +1752,15 @@ class QSOT_Post_Type_Event_Area {
 
     return $tables;
 	}
+
+    private function addFastPrep($arr, $wpdb, $query, $key, $value=null)
+    {
+        if($value !== null)
+            array_push($arr, $wpdb->prepare($query, $key, $value));
+        else
+            array_push($arr, $wpdb->prepare($query, $key));
+        return $arr;
+    }
 }
 
 if ( defined( 'ABSPATH' ) && function_exists( 'add_action' ) )
