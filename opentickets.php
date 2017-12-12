@@ -32,7 +32,7 @@ class QSOT {
 		if (!self::_memory_check()) return;
 
 		// load the text domain after all plugins have loaded
-		add_action( 'plugins_loaded', array( __CLASS__, 'load_textdomain' ), 4 );
+		add_action( 'plugins_loaded', array( __CLASS__, 'loadtextdomain' ), 4 );
 
 		// inject our own autoloader before all others in case we need to overtake some woocommerce autoloaded classes down the line. this may not work with 100% of all classes
 		// because we dont actually control the plugin load order, but it should suffice for what we may use it for. if it does not suffice at any time, then we will rethink this
@@ -447,7 +447,7 @@ class QSOT {
 		return $text;
 	}
 
-	public static function load_textdomain() {
+	public static function loadtextdomain() {
 		$domain = 'opentickets-community-edition';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 

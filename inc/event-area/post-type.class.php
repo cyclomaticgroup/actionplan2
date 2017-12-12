@@ -50,7 +50,7 @@ class QSOT_Post_Type_Event_Area {
 		add_filter( 'qsot-upgrader-table-descriptions', array( &$this, 'setup_tables' ), 1 );
 
 		// action to register the post type
-		add_action( 'init', array( &$this, 'register_post_type' ), 2 );
+		add_action( 'init', array( &$this, 'registerpost_type' ), 2 );
 		
 		// register the assets we need for this post type
 		add_action( 'init', array( &$this, 'register_assets' ), 1000 );
@@ -151,14 +151,14 @@ class QSOT_Post_Type_Event_Area {
 
 		// add the generic admin ajax handlers
 		$aj = QSOT_Ajax::instance();
-		$aj->register( 'load-event', array( &$this, 'admin_ajax_load_event' ), array( 'edit_shop_orders' ), null, 'qsot-admin-ajax' );
+		$aj->register( 'load-event', array( &$this, 'admin_ajax_loadevent' ), array( 'edit_shop_orders' ), null, 'qsot-admin-ajax' );
 	}
 
 	// deinitialize the object. remove actions and filter
 	public function deinitialize() {
 		remove_action( 'switch_blog', array( &$this, 'setup_table_names' ), PHP_INT_MAX );
 		remove_filter( 'qsot-upgrader-table-descriptions', array( &$this, 'setup_tables' ) );
-		remove_action( 'init', array( &$this, 'register_post_type' ), 2 );
+		remove_action( 'init', array( &$this, 'registerpost_type' ), 2 );
 		remove_action( 'init', array( &$this, 'register_assets' ), 1000 );
 		remove_action( 'qsot-register-event-area-type', array( &$this, 'register_event_area_type' ), 1000 );
 		remove_action( 'qsot-deregister-event-area-type', array( &$this, 'deregister_event_area_type' ), 1000 );
@@ -250,7 +250,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// register the post type with wordpress
-	public function register_post_type() {
+	public function registerpost_type() {
 		// singular and plural forms of the name of this post type
 		$single = __( 'Event Area', 'opentickets-community-edition' );
 		$plural = __( 'Event Areas', 'opentickets-community-edition' );
@@ -1613,7 +1613,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// load the event details for the admin ticket selection interface
-	public function admin_ajax_load_event( $resp, $event ) {
+	public function admin_ajax_loadevent( $resp, $event ) {
 		// if the event does not exist, then bail
 		if ( ! is_object( $event ) ) {
 			$resp['e'][] = __( 'Could not find the new event.', 'opentickets-community-edition' );
