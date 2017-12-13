@@ -704,6 +704,7 @@ class QSOT {
 		// set the default context for the error message
 		$context = $context ? $context : __( 'the installation process', 'opentickets-community-edition' );
 
+		
 		// if we ar not in debug mode
 		if ( ! WP_DEBUG ) {
 			if ( ! file_exists( $file ) || ! is_readable( $file ) || is_dir( $file ) )

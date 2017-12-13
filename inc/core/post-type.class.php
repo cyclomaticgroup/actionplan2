@@ -1434,6 +1434,7 @@ class qsot_post_type {
 
 		unset( $data['_qsot_event_settings']['count'] );
 		// expand the json data
+		
 		foreach ( $data['_qsot_event_settings'] as $ind => $item )
 			$data['_qsot_event_settings'][ $ind ] = json_decode( stripslashes( $item ) );
 
@@ -1472,6 +1473,7 @@ class qsot_post_type {
 		// and properly group them for possible later processing
 		foreach ( $data['_qsot_event_settings'] as $item ) {
 			// expand the settings
+
 			$tmp = ! is_scalar( $item ) ? $item : json_decode( stripslashes( $item ) );
 
 			// update the timestamps to be non-dst for storage
@@ -1734,7 +1736,7 @@ class qsot_post_type {
 		$current_start = get_post_meta( $post_id, self::$o->{'meta_key.start'}, true );
 		$current_end = get_post_meta( $post_id, self::$o->{'meta_key.end'}, true );
 
-		// calculate the real start and end times over all child events
+			// calculate the real start and end times over all child events
 		list( $actual_start, $actual_end ) = apply_filters( 'qsot-event-date-range', array(), array( 'event_id' => $post_id ) );
 
 		$submit_start_date = $submit_end_date = array();
@@ -1995,7 +1997,7 @@ class qsot_post_type {
 			// register whatever value we found
 			$options[ $k ] = $value;
 		}
-
+		 
 		list( $options['hard_stop_date'], $options['hard_stop_time'] ) = empty( $options['hard_stop'] ) ? array( '', '' ) : explode( ' ', $options['hard_stop'], 2 );
 
 		?>
