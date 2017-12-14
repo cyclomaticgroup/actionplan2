@@ -1329,7 +1329,7 @@ class qsot_post_type {
 	}
 
 	// handle the saving of an individual child event
-	public static function save_child_event( $post_id, $post=null) {
+	public static function save_child_event( $post_id) {
 		static $ran_for = array();
 		// only run this function once for a post
 		if ( isset( $ran_for[ 'post-' . $post_id ] ) )

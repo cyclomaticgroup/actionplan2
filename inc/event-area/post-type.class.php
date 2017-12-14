@@ -1152,7 +1152,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// actually perform the update
-	protected function _update_order_id( $order, $item, $item_id, $event_area, $area_type ) {
+	protected function _update_order_id( $order, $item, $item_id, $event_area ) {
 		$wpdb='';
 		$cuids = array();
 

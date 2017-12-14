@@ -75,7 +75,6 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	// handle the output of the qTranslate LSB fields on the settings page
 	public static function field_lsb( ) {
 		// if the qtranslate plugin is not active, then bail
-        $args='';
 		if ( ! defined( 'QTRANSLATE_DIR' ) )
 			{return;}
 		?><tr valign="top"><td colspan="2"><div id="<?php echo esc_attr( $args['id'] ) ?>"></div></td></tr><?php
