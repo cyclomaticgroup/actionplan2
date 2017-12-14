@@ -23,7 +23,7 @@ class qsot_admin_settings {
 		$this->current_report = isset( $_GET['report'] ) ? sanitize_title( $_GET['report'] ) : current( array_keys( $this->reports[ $this->current_tab ]['reports'] ) );
 
 		// if this is the printer-friendly version, then handle that now
-		if ( isset( $_REQUEST['pf'] ) && 1 == $_REQUEST['pf'] ) {
+		if ( isset( $_POST['pf'] ) && 1 == $_POST['pf'] ) {
 			// if the report exists
 			if ( isset( $this->reports[ $this->current_tab ], $this->reports[ $this->current_tab ]['reports'], $this->reports[ $this->current_tab ]['reports'][ $this->current_report ] )) {
 				$report = $this->reports[ $this->current_tab ]['reports'][ $this->current_report ];

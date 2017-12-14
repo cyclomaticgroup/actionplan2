@@ -83,7 +83,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	// when starting to run the report, make sure our position counters are reset and that we know what event we are running this thing for
 	protected function _starting() {
 		$this->offset = 0;
-		$this->event_id = max( 0, intval( $_REQUEST['event_id'] ) );
+		$this->event_id = max( 0, intval( $_POST['event_id'] ) );
 		$this->event = $this->event_id ? get_post( $this->event_id ) : (object)array( 'post_title' => __( '(unknown event)', 'opentickets-community-edition' ) );;
 
 		// get the list of valid state types for this event
@@ -128,7 +128,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	// handle the ajax requests for this report
 	protected function _process_ajax() {
 		// if the parent_id changed, then just pop a new form
-		if ( isset( $_REQUEST['reload-form'] ) || ! isset( $_REQUEST['parent_event_id'], $_REQUEST['last_parent_id'] ) || empty( $_REQUEST['parent_event_id'] ) || $_REQUEST['parent_event_id'] != $_REQUEST['last_parent_id'] ) {
+		if ( isset( $_POST['reload-form'] ) || ! isset( $_POST['parent_event_id'], $_POST['last_parent_id'] ) || empty( $_POST['parent_event_id'] ) || $_POST['parent_event_id'] != $_POST['last_parent_id'] ) {
 			$this->_form();
 		}
 		// otherwise, pop the results table
@@ -143,9 +143,9 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		// add our special params
 		$url = add_query_arg( array(
 			'sa' => $this->slug,
-			'parent_event_id' => $_REQUEST['parent_event_id'],
-			'last_parent_id' => $_REQUEST['last_parent_id'],
-			'event_id' => $_REQUEST['event_id']
+			'parent_event_id' => $_POST['parent_event_id'],
+			'last_parent_id' => $_POST['last_parent_id'],
+			'event_id' => $_POST['event_id']
 		), $url );
 
 		return $url;
@@ -157,7 +157,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		$extended_form = QSOT_Admin_Report::_verify_run_report();
 
 		// check if the parent event_id was was submitted, becuase it is requried to get a list of child events
-		$parent_event_id = max( 0, intval( isset( $_REQUEST['parent_event_id'] ) ? $_REQUEST['parent_event_id'] : 0 ) );
+		$parent_event_id = max( 0, intval( isset( $_POST['parent_event_id'] ) ? $_POST['parent_event_id'] : 0 ) );
 
 		$parents = $children = $parent_data = $selected_parent = $child_data = array();
 		// get a list of the parent events
@@ -214,7 +214,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		}
 
 		$this_year = intval( date( 'Y' ) );
-		$submitted_year = isset( $_REQUEST['year'] ) ? intval( $_REQUEST['year'] ) : $this_year;
+		$submitted_year = isset( $_POST['year'] ) ? intval( $_POST['year'] ) : $this_year;
 		// draw the form
 		?>
 			<div class="main-form">
@@ -263,11 +263,11 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 			return true;
 
 		// check that our event_id is present
-		if ( ! isset( $_REQUEST['event_id'] ) || intval( $_REQUEST['event_id'] ) <= 0 )
+		if ( ! isset( $_POST['event_id'] ) || intval( $_POST['event_id'] ) <= 0 )
 			return false;
 
 		// finally verify that the parent event was not changed
-		if ( ! isset( $_REQUEST['parent_event_id'], $_REQUEST['last_parent_id'] ) || empty( $_REQUEST['parent_event_id'] ) || $_REQUEST['parent_event_id'] != $_REQUEST['last_parent_id'] )
+		if ( ! isset( $_POST['parent_event_id'], $_POST['last_parent_id'] ) || empty( $_POST['parent_event_id'] ) || $_POST['parent_event_id'] != $_POST['last_parent_id'] )
 			return false;
 
 		return true;

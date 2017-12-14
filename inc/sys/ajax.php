@@ -60,7 +60,7 @@ class QSOT_Ajax {
 	// handle the basic validation of the ajax requests and basic security
 	public function handle_request() {
 		// figure out if there is an sa in the request. if not, bail
-		if ( ! ( $sa = $_REQUEST['sa'] ) || ! isset( $this->by_sa[ $sa ] ) )
+		if ( ! ( $sa = $_POST['sa'] ) || ! isset( $this->by_sa[ $sa ] ) )
 			return;
 
 		$bypass_nonce = false;
@@ -74,14 +74,14 @@ class QSOT_Ajax {
 
 		$action = str_replace( 'wp_ajax_', '', str_replace( 'wp_ajax_nopriv_', '', current_action() ) );
 		// make sure there is an nonce present that matches. the frist level basic security
-		$nonce_passes = ( isset( $_REQUEST['_n'] ) && wp_verify_nonce( $_REQUEST['_n'], 'do-' . $action ) );
+		$nonce_passes = ( isset( $_POST['_n'] ) && wp_verify_nonce( $_POST['_n'], 'do-' . $action ) );
 		if ( ! $bypass_nonce && ! $nonce_passes )
 			return;
 
 		$event = false;
 		// if there was an event_id supplied, then load the event now, and it's event area
-		if ( isset( $_REQUEST['event_id'] ) && intval( $_REQUEST['event_id'] ) > 0 ) {
-			$event = apply_filters( 'qsot-get-event', $event, $_REQUEST['event_id'] );
+		if ( isset( $_POST['event_id'] ) && intval( $_POST['event_id'] ) > 0 ) {
+			$event = apply_filters( 'qsot-get-event', $event, $_POST['event_id'] );
 			if ( is_object( $event ) ) {
 				$ea_id = intval( get_post_meta( $event->ID, '_event_area_id', true ) );
 				if ( $ea_id > 0 ) {
@@ -122,7 +122,7 @@ class QSOT_Ajax {
 			$out['s'] = false;
 		// otherwise, if we ran at least one function, check and see if we need to update the NONCE for the next request.
 		// this is needed because WooCommerce messes with the NONCE value when a user changes state from anonymous guest, to anonymous customer
-		else if ( ( $new_nonce = wp_create_nonce( 'do-' . $action ) ) && $new_nonce !== $_REQUEST['_n'] )
+		else if ( ( $new_nonce = wp_create_nonce( 'do-' . $action ) ) && $new_nonce !== $_POST['_n'] )
 			$out['_nn'] = $new_nonce;
 
 		// if there are no error messages, just remove the key from the response
@@ -256,7 +256,7 @@ class QSOT_Ajax {
 	// generic ajax method to find products based on a search string
 	public function aj_find_product( $resp ) {
 		// get the search string
-		$search = isset( $_REQUEST['q'], $_REQUEST['q']['term'] ) ? $_REQUEST['q']['term'] : '';
+		$search = isset( $_POST['q'], $_POST['q']['term'] ) ? $_POST['q']['term'] : '';
 
 		// setup serch args
 		$args1 = array(

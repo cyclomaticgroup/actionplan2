@@ -56,7 +56,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	public static function save() {
 		$current_tab='';
 
-		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'qsot-settings' ) )
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'qsot-settings' ) )
             trigger_error("Action failed. Please refresh the page and retry.", E_USER_NOTICE);
 
         // Trigger actions
@@ -75,6 +75,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	// handle the output of the qTranslate LSB fields on the settings page
 	public static function field_lsb( ) {
 		// if the qtranslate plugin is not active, then bail
+        $args='';
 		if ( ! defined( 'QTRANSLATE_DIR' ) )
 			{return;}
 		?><tr valign="top"><td colspan="2"><div id="<?php echo esc_attr( $args['id'] ) ?>"></div></td></tr><?php

@@ -96,7 +96,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 				break;
 
 				case 'request':
-					foreach ($ks as $k) if (isset($_REQUEST[$k]) && $_REQUEST[$k] == 2) {
+					foreach ($ks as $k) if (isset($_POST[$k]) && $_POST[$k] == 2) {
 						$clear = true;
 						break 3;
 					}
@@ -265,6 +265,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 
 	// generic function that can be called to load a template and render it
 	protected function _display_widget($args, $inst) {
+	    $template='';
 		// normalize the instance options so that we at least have a template to load
 		$inst = wp_parse_args($inst, array('template' => 'default'));
 		// bring all array values into local scope as variables

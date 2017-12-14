@@ -411,12 +411,12 @@ class qsot_frontend_calendar {
 		);
 
 		// if there was a data range supplied (the days shown on the current calendar page), then use those in the lookup
-		if ( isset( $_REQUEST['start'] ) ) $args['start_date_after'] = date( 'Y-m-d H:i:s', strtotime( $_REQUEST['start'] ) );
-		if ( isset( $_REQUEST['end'] ) ) $args['start_date_before'] = date( 'Y-m-d H:i:s', strtotime( $_REQUEST['end'] ) );
+		if ( isset( $_POST['start'] ) ) $args['start_date_after'] = date( 'Y-m-d H:i:s', strtotime( $_POST['start'] ) );
+		if ( isset( $_POST['end'] ) ) $args['start_date_before'] = date( 'Y-m-d H:i:s', strtotime( $_POST['end'] ) );
 
 		// if there are pricing specific filters supplied, add those to the query
-		if ( isset( $_REQUEST['priced_like'] ) ) $args['priced_like'] = (int)$_REQUEST['priced_like'];
-		if ( isset( $_REQUEST['has_price'] ) ) $args['has_price'] = $_REQUEST['has_price'];
+		if ( isset( $_POST['priced_like'] ) ) $args['priced_like'] = (int)$_POST['priced_like'];
+		if ( isset( $_POST['has_price'] ) ) $args['has_price'] = $_POST['has_price'];
 
 		// can the current user see specially statused events? if so add those also
 		if ( apply_filters( 'qsot-show-hidden-events', current_user_can( 'edit_posts' ) || current_user_can( 'box_office' ) ) ) $args['post_status'][] = 'hidden';

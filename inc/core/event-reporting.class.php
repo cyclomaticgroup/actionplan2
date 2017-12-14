@@ -210,15 +210,15 @@ abstract class QSOT_Admin_Report {
 	protected function _verify_run_report( $only_orig=false ) {
 		$run = true;
 		// if the nonce or report name is not set, bail
-		if ( ! isset( $_REQUEST['_n'], $_REQUEST['sa'] ) )
+		if ( ! isset( $_POST['_n'], $_POST['sa'] ) )
 			$run = false;
 
 		// if the report name does not match this report, bail
-		if ( isset( $_REQUEST['sa'] ) && $_REQUEST['sa'] !== $this->slug )
+		if ( isset( $_POST['sa'] ) && $_POST['sa'] !== $this->slug )
 			$run = false;
 
 		// if the nonce does not match, then bail
-		if ( isset( $_REQUEST['_n'] ) && ! wp_verify_nonce( $_REQUEST['_n'], 'do-qsot-admin-report-ajax' ) )
+		if ( isset( $_POST['_n'] ) && ! wp_verify_nonce( $_POST['_n'], 'do-qsot-admin-report-ajax' ) )
 			$run = false;
 
 		// if the extra function is false, then fail to run

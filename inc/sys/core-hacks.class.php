@@ -76,13 +76,13 @@ class qsot_core_hacks
         if ($post_id)
             $post = get_post($post_id);
 
-        $post_type = $post ? $post->post_type : (isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : false);
+        $post_type = $post ? $post->post_type : (isset($_POST['post_type']) ? $_POST['post_type'] : false);
         if (!$post_type) return;
         if ($post_type !== 'page') return;
-        if (!isset($_REQUEST['page_template'])) return;
+        if (!isset($_POST['page_template'])) return;
 
-        update_post_meta($post->ID, '_wp_page_template', $_REQUEST['page_template']);
-        unset($_REQUEST['page_template']);
+        update_post_meta($post->ID, '_wp_page_template', $_POST['page_template']);
+        unset($_POST['page_template']);
     }
 
     public static function add_view_customer_facing_emails($list)
@@ -650,10 +650,10 @@ class qsot_core_hacks
     }*/
 
     public static function or_display_name_user_query(&$query) {
-        if (!isset($_GET['term'], $_REQUEST['s'])) return;
+        if (!isset($_GET['term'], $_POST['s'])) return;
         $wpdb='';
         $term = preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_GET['term'] ) ) ));
-        $term = empty($term) && is_admin() ? preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_REQUEST['s'] ) ) )) : $term;
+        $term = empty($term) && is_admin() ? preg_replace('#\s+#', '%', urldecode( stripslashes( strip_tags( $_POST['s'] ) ) )) : $term;
         if (!empty($term))
             $query->query_where = self::queryTerm($query, $wpdb, $term);
         $query->query_orderby = ' GROUP BY '.$wpdb->users.'.id '.$query->query_orderby;

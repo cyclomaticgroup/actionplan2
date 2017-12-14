@@ -168,14 +168,14 @@ class QSOT {
 		$post_id = 0;
 		$post_type = 'post';
 		// if there is a post_id in the admin url, and the post it represents is of our event post type, then this is an existing post we are just editing
-		if (isset($_REQUEST['post'])) {
-			$post_id = $_REQUEST['post'];
+		if (isset($_POST['post'])) {
+			$post_id = $_POST['post'];
 			$existing = true;
-			$post_type = get_post_type($_REQUEST['post']);
+			$post_type = get_post_type($_POST['post']);
 		// if there is not a post_id but this is the edit page of our event post type, then we still need to load the assets
-		} else if (isset($_REQUEST['post_type'])) {
+		} else if (isset($_POST['post_type'])) {
 			$existing = false;
-			$post_type = $_REQUEST['post_type'];
+			$post_type = $_POST['post_type'];
 		// if this is not an edit page of our post type, then we need none of these assets loaded
 		} else return;
 
