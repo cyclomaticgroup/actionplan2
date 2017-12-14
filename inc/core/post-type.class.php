@@ -572,7 +572,6 @@ class qsot_post_type {
 			if ( self::$options->{'qsot-single-synopsis'} && 'no' != self::$options->{'qsot-single-synopsis'} ) {
 				// emulate that the 'current post' is actually the parent post, so that we can run the the_content filters, without an infinite recursion loop
 
-                $q = clone $wp_query;
 				$p = clone $post;
 				$post = get_post( $event->post_parent );
 				setup_postdata( $post );
@@ -581,9 +580,8 @@ class qsot_post_type {
 				$content = apply_filters( 'the_content', get_the_content() );
 
 				// restore the original post
-				$wp_query = $q;
 				$post = $p;
-				setup_postdata( $p );
+				setup_postdata( $post );
 			}
 
 			// inform other classes and plugins of our new content
@@ -1335,9 +1333,6 @@ class qsot_post_type {
 		if ( isset( $ran_for[ 'post-' . $post_id ] ) )
 			return;
 		$ran_for[ 'post-' . $post_id ] = 1;
-
-		// load the post, just in case it was not sent
-		$post = get_post( $post_id );
 
 		// handle saving of the event date time changes
 		if ( isset( $_POST['qsot-single-event-settings'] ) && wp_verify_nonce( $_POST['qsot-single-event-settings'], 'qsot-save-single-event-settings' ) ) {
