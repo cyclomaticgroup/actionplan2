@@ -400,7 +400,6 @@ class qsot_frontend_calendar {
 
 	// grab a list of all the events that meet the supplied criteria
 	public static function handle_ajax( $response, $event ) {
-		$parents = $final = array();
 
 		// setup the basic posts query to find out events
 		$args = array(
@@ -443,7 +442,6 @@ class qsot_frontend_calendar {
 
 	// aggregate all the data about a list of calendar events
 	public static function get_all_calendar_events( $events ) {
-        $wpdb='';
 		static $show_count = null;
 		// figure out if we need to include the count of the availability
 		if ( null == $show_count )

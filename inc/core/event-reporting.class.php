@@ -317,8 +317,9 @@ abstract class QSOT_Admin_Report {
 		// if no html rows were printed, then print a row indicating that
 		if ( empty( $all_html_rows ) ) {
 			$columns = count( $this->html_report_columns() );
+			$trCol = '<tr><td colspan="'.$columns.'">'.__( 'There are no tickts sold for this event yet.', 'opentickets-community-edition' ).'</td></tr>';
+			echo ($trCol);
 			?>
-		<tr><td colspan="<?php $columns ?> "><?php echo __( 'There are no tickts sold for this event yet.', 'opentickets-community-edition' )?></td></tr>
 	<?php
 		}
 	}
@@ -568,10 +569,12 @@ abstract class QSOT_Admin_Report {
 	protected function _html_report_header( $use_sorter=true ) {
 		$sorter = $use_sorter ? 'use-tablesorter' : '';
 		// construct the header of the resulting table
+        $headerTable = '<table class="widefat '.$sorter.'" cellspacing="0">
+				<thead>'.$this->_html_report_columns( true ).'</thead>
+				<tbody>';
+        echo ($headerTable);
 		?>
-			<table class="widefat <?php echo $sorter ?>" cellspacing="0">
-				<thead><?php $this->_html_report_columns( true ) ?></thead>
-				<tbody>
+
 		<?php
 	}
 
@@ -619,7 +622,9 @@ abstract class QSOT_Admin_Report {
 	protected function _printer_friendly_header() {
 		define( 'IFRAME_REQUEST', true );
 		// direct copy from /wp-admin/admin-header.php
-		$title=''; $hook_suffix=''; $current_screen=''; $wp_locale='';  $wp_version='';
+		$title='';
+		$hook_suffix='';
+		$current_screen='';
 
 		// Catch plugins that include admin-header.php before admin.php completes.
 		if ( empty( $current_screen ) )
@@ -662,20 +667,18 @@ abstract class QSOT_Admin_Report {
 		wp_enqueue_script('utils');
 		wp_enqueue_script( 'svg-painter' );
 
-		$admin_body_class = preg_replace('/[^a-z0-9_-]+/i', '-', $hook_suffix);
 		?>
 		<script type="text/javascript">
 		addLoadEvent = function(func){if(typeof jQuery!="undefined")jQuery(document).ready(func);else if(typeof wpOnload!='function'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>',
 			pagenow = '<?php echo $current_screen->id; ?>',
 			typenow = '<?php echo $current_screen->post_type; ?>',
-			adminpage = '<?php echo $admin_body_class; ?>',
-			thousandsSeparator = '<?php echo addslashes( $wp_locale->number_format['thousands_sep'] ); ?>',
-			decimalPoint = '<?php echo addslashes( $wp_locale->number_format['decimal_point'] ); ?>',
+			adminpage = '<?php echo preg_replace('/[^a-z0-9_-]+/i', '-', $hook_suffix); ?>',
 			isRtl = <?php echo (int) is_rtl(); ?>;
 		</script>
 		<meta name="viewport" content="width=device-width,initial-scale=1.0">
 		<?php
+        $wp_version='';
 
 		/**
 		 * Enqueue scripts for all admin pages.
@@ -731,8 +734,11 @@ abstract class QSOT_Admin_Report {
 		 */
 		do_action( 'admin_head' );
 
-		if ( get_user_setting('mfold') == 'f' )
-			$admin_body_class .= ' folded';
+        $admin_body_class = preg_replace('/[^a-z0-9_-]+/i', '-', $hook_suffix);
+
+        if ( get_user_setting('mfold') == 'f' ) {
+		    $admin_body_class .= ' folded';
+		}
 
 		if ( !get_user_setting('unfold') )
 			$admin_body_class .= ' auto-fold';
@@ -783,10 +789,12 @@ abstract class QSOT_Admin_Report {
 		 * @param string $classes Space-separated list of CSS classes.
 		 */
 		$admin_body_classes = apply_filters( 'admin_body_class', '' );
-		?>
-		<body class="wp-admin wp-core-ui no-js printer-friendly-report <?php echo $admin_body_classes . ' ' . $admin_body_class; ?>">
+		$bodyRender = '<body class="wp-admin wp-core-ui no-js printer-friendly-report '. $admin_body_classes . ' ' . $admin_body_class .'">
 		<div id="wpwrap">
-		<div class="inner-wrap">
+		<div class="inner-wrap">';
+		echo $bodyRender;
+		?>
+
 		<?php
 	}
 

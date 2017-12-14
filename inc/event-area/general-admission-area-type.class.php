@@ -310,7 +310,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 
 		// fetch the zoner
 		$zoner = $this->get_zoner();
-		$stati = $zoner->get_stati();
 
 		// get the cart item
 		$items = WC()->cart->get_cart();
@@ -392,7 +391,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		$stati = $zoner->get_stati();
 
 		// remove the reservation
-		$res = $zoner->remove( false, array(
+		$zoner->remove( false, array(
 			'event_id' => $item['event_id'],
 			'ticket_type_id' => $item['product_id'],
 			'customer_id' => $zoner->current_user(),

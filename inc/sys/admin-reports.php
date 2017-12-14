@@ -40,11 +40,6 @@ class qsot_admin_settings {
 	 * Handles output of the reports page in admin.
 	 */
 	public function output() {
-		$reports = $this->reports;
-		$first_tab = $this->first_tab;
-		$current_tab = $this->current_tab;
-		$current_report = $this->current_report;
-
 		include_once( WC()->plugin_path() . '/includes/admin/reports/class-wc-admin-report.php' );
 		include_once( 'views/html-admin-page-reports.php' );
 	}

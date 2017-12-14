@@ -933,8 +933,6 @@ class qsot_post_type {
 	// for instance, if an external plugin wants to load something after our js, like a takeover js, they will have access to see our js before we actually use it, and will
 	// actually be able to use it as a dependency to their js. if the js is not yet declared, you cannot use it as a dependency.
 	public static function register_assets() {
-		$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
-
 		$calendar = qsot_frontend_calendar::load_calendar_language();
 		// main event ui js. combines all the moving parts to make the date/time selection process more user friendly than other crappy event plugins
 		wp_register_script('qsot-event-ui', self::$o->core_url.'assets/js/admin/event-ui.js', array('qsot-tools', $calendar), self::$o->version);
@@ -1504,8 +1502,8 @@ class qsot_post_type {
 						// load the existing post, so that we can fetch the original author and content
 						$orig = get_post( $tmp->post_id );
 
-						// parse the date so that we can use it to make a proper post_title
-						$d = strtotime( $tmp->start );
+						// start date
+						$d = $tmp->start;
 
 						// if the post is set to publish in the future, then adjust the status
 						$pub = strtotime( $tmp->pub_date );
@@ -1535,7 +1533,7 @@ class qsot_post_type {
 							'meta' => array( // setup the meta to save
 								self::$o->{'meta_key.capacity'} => $tmp->capacity, // max occupants
 								self::$o->{'meta_key.end'} => $tmp->end, // end time, for lookup and display purposes later
-								self::$o->{'meta_key.start'} => $tmp->start, // start time for lookup and display purposes later
+								self::$o->{'meta_key.start'} => $d, // start time for lookup and display purposes later
 								self::$o->{'meta_key.purchase_limit'} => $tmp->purchase_limit, // the specific child event purchase limit
 							),
 							'submitted' => $tmp,
@@ -1868,32 +1866,45 @@ class qsot_post_type {
 		$end_time = date( QSOT_Date_Formats::php_date_format( 'g:ia' ), QSOT_Utils::local_timestamp( $end ) );
 
 		// render the settings box
+        $createNonce = esc_attr( wp_create_nonce( 'qsot-save-single-event-settings' ) );
+        $startDateTime = _e( 'Start Date/time', 'opentickets-community-edition' );
+        $endDateTime = _e( 'End Date/time', 'opentickets-community-edition' );
+        $permLink = _e( 'Permalink', 'opentickets-community-edition' );
+        $permLinkYes = _e( 'Yes, update the permalink upon save.', 'opentickets-community-edition' );
+        $attrStartC = esc_attr( $start_c );
+        $attrEndC = esc_attr( $end_c );
+        $attrStartT = esc_attr( $start_time );
+        $attrEndT = esc_attr( $end_time );
+        $jDateFormat = QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' );
+
+        $settingsBoxPrint = '<div class="qsot-mb single-event-settings">
+					<input type="hidden" name="qsot-single-event-settings" value="'.$createNonce.'" />
+
+					<div class="field">
+						<label for="qsot-single-event-start-date">'.$startDateTime.'</label>
+						<input type="text" class="widefat use-i18n-datepicker" name="qsot-single-event[start_date]" value="'.$attrStartC.'"
+								data-display-format="'.$jDateFormat.'" role="from" scope=".qsot-mb" />
+						<span class="at-time"><input type="text" class="widefat use-timepicker" name="qsot-single-event[start_time]" value="'.$attrStartT.'" /></span>
+					</div>
+
+					<div class="field">
+						<label for="qsot-single-event-end-date">'.$endDateTime.'</label>
+						<input type="text" class="widefat use-i18n-datepicker" name="qsot-single-event[end_date]" value="'.$attrEndC.'"
+								data-display-format="'.$jDateFormat.'" role="to" scope=".qsot-mb" />
+						<span class="at-time"><input type="text" class="widefat use-timepicker" name="qsot-single-event[end_time]" value="'.$attrEndT.'" /></span>
+					</div>
+
+					<div class="field">
+						<label for="qsot-update-permalink">'.$permLink.'</label>
+						<span class="cb-wrap">
+							<input type="checkbox" value="1" name="qsot-update-permalink" id="qsot-update-permalink" />
+							<span class="cb-words">'.$permLinkYes.'</span>
+						</span>
+					</div>
+				</div>';
+        echo ($settingsBoxPrint);
 		?>
-			<div class="qsot-mb single-event-settings">
-				<input type="hidden" name="qsot-single-event-settings" value="<?php echo esc_attr( wp_create_nonce( 'qsot-save-single-event-settings' ) ) ?>" />
 
-				<div class="field">
-					<label for="qsot-single-event-start-date"><?php _e( 'Start Date/time', 'opentickets-community-edition' ) ?></label>
-					<input type="text" class="widefat use-i18n-datepicker" name="qsot-single-event[start_date]" value="<?php echo esc_attr( $start_c ) ?>"
-							data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>" role="from" scope=".qsot-mb" />
-					<span class="at-time"><input type="text" class="widefat use-timepicker" name="qsot-single-event[start_time]" value="<?php echo esc_attr( $start_time ) ?>" /></span>
-				</div>
-
-				<div class="field">
-					<label for="qsot-single-event-end-date"><?php _e( 'End Date/time', 'opentickets-community-edition' ) ?></label>
-					<input type="text" class="widefat use-i18n-datepicker" name="qsot-single-event[end_date]" value="<?php echo esc_attr( $end_c ) ?>"
-							data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>" role="to" scope=".qsot-mb" />
-					<span class="at-time"><input type="text" class="widefat use-timepicker" name="qsot-single-event[end_time]" value="<?php echo esc_attr( $end_time ) ?>" /></span>
-				</div>
-
-				<div class="field">
-					<label for="qsot-update-permalink"><?php _e( 'Permalink', 'opentickets-community-edition' ) ?></label>
-					<span class="cb-wrap">
-						<input type="checkbox" value="1" name="qsot-update-permalink" id="qsot-update-permalink" />
-						<span class="cb-words"><?php _e( 'Yes, update the permalink upon save.', 'opentickets-community-edition' ) ?></span>
-					</span>
-				</div>
-			</div>
 		<?php
 	}
 
@@ -2060,43 +2071,46 @@ class qsot_post_type {
 		$start_time = $start_raw > 0 ? date_i18n( 'H:i:s', $start_raw ) : '00:00:00';
 		$end_time = $end_raw > 0 ? date_i18n( 'H:i:s', $end_raw ) : '00:00:00';
 
+        $ppSdtOp = '<div class="qsot-mb">
+					<div class="field">
+						<label>'._e( 'Start Date/Time', 'opentickets-community-edition' ).':</label>
+						<table cellspacing="0">
+							<tbody>
+								<tr>
+									<td width="60%">
+										<input type="text" class="use-i18n-datepicker widefat" name="_qsot_start_date" value="" data-init-date="'.esc_attr( $start ).'" scope="td"
+												data-display-format="'.esc_attr( __( 'mm-dd-yy', 'opentickets-community-edition' ) ).'" />
+									</td>
+									<td width="1%">'._e( '@', 'opentickets-community-edition' ).'</td>
+									<td width="39%">
+										<input type="text" class="widefat use-timepicker" name="_qsot_start_time" value="'.esc_attr( $start_time ).'" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="field">
+						<label>'._e( 'End Date/Time:', 'opentickets-community-edition' ).'</label>
+						<table cellspacing="0">
+							<tbody>
+								<tr>
+									<td width="60%">
+										<input type="text" class="use-i18n-datepicker widefat" name="_qsot_end_date" value="" data-init-date="'.esc_attr( $end ).'" scope="td"
+												data-display-format="'.esc_attr( __( 'mm-dd-yy', 'opentickets-community-edition' ) ).'" />
+									</td>
+									<td width="1%">'._e('@','opentickets-community-edition').'</td>
+									<td width="39%">
+										<input type="text" class="widefat use-timepicker" name="_qsot_end_time" value="'.esc_attr($end_time).'" />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>';
+
+        echo ($ppSdtOp);
+
 		?>
-			<div class="qsot-mb">
-				<div class="field">
-					<label><?php _e( 'Start Date/Time', 'opentickets-community-edition' ) ?>:</label>
-					<table cellspacing="0">
-						<tbody>
-							<tr>
-								<td width="60%">
-									<input type="text" class="use-i18n-datepicker widefat" name="_qsot_start_date" value="" data-init-date="<?php echo esc_attr( $start ) ?>" scope="td"
-											data-display-format="<?php echo esc_attr( __( 'mm-dd-yy', 'opentickets-community-edition' ) ) ?>" />
-								</td>
-								<td width="1%"><?php _e( '@', 'opentickets-community-edition' ) ?></td>
-								<td width="39%">
-									<input type="text" class="widefat use-timepicker" name="_qsot_start_time" value="<?php echo esc_attr( $start_time ) ?>" />
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="field">
-					<label><?php _e( 'End Date/Time:', 'opentickets-community-edition' ) ?></label>
-					<table cellspacing="0">
-						<tbody>
-							<tr>
-								<td width="60%">
-									<input type="text" class="use-i18n-datepicker widefat" name="_qsot_end_date" value="" data-init-date="<?php echo esc_attr( $end ) ?>" scope="td"
-											data-display-format="<?php echo esc_attr( __( 'mm-dd-yy', 'opentickets-community-edition' ) ) ?>" />
-								</td>
-								<td width="1%"><?php _e('@','opentickets-community-edition') ?></td>
-								<td width="39%">
-									<input type="text" class="widefat use-timepicker" name="_qsot_end_time" value="<?php echo esc_attr($end_time) ?>" />
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
 		<?php
 	}
 
@@ -2105,9 +2119,8 @@ class qsot_post_type {
 		$ts_1_week = date( 'c', strtotime( $ts . ' +1 week' )  );
 		$now = QSOT_Utils::local_timestamp( $now, 'from' );
 		$end = strtotime( '+1 hour', $now );
-		$one_week = strtotime( '+1 week', $now );
-		?>
-			<div class="<?php echo self::$o->pre ?>event-date-time-wrapper events-ui">
+
+		$htmlToRender = '<div class="'.self::$o->pre.'event-date-time-wrapper events-ui">
 				<input type="hidden" name="save-recurrence" value="1"/>
 				<div class="option-scope">
 					<div class="option-sub above hide-if-js" rel="add">
@@ -2115,142 +2128,171 @@ class qsot_post_type {
 							<tbody>
 								<tr>
 									<td width="35%">
-										<h4><?php _e('Basic Settings','opentickets-community-edition') ?></h4>
+										<h4>'._e('Basic Settings','opentickets-community-edition').'</h4>
 										<div class="date-time-block subsub">
 
-											<input type="text" class="use-i18n-datepicker date-text" name="start-date" scope="td" data-link-with=".repeat-options [role='from']"
-													data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>"
-													value="<?php echo $ts ?>" title="<?php _e('Start Date','opentickets-community-edition') ?>" role="from" />
-											<input type="text" class="time-text" name="start-time" value="<?php echo date(__('h:ia','opentickets-community-edition'), $now) ?>" title="<?php _e('Start Time','opentickets-community-edition') ?>" />
+											<input type="text" class="use-i18n-datepicker date-text" name="start-date" scope="td" data-link-with=".repeat-options [role=\'from\']"
+													data-display-format="'.QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ).'"
+													value="'.$ts.'" title="'._e('Start Date','opentickets-community-edition').'" role="from" />
+											<input type="text" class="time-text" name="start-time" value="'.date(__('h:ia','opentickets-community-edition'), $now).'" title="'._e('Start Time','opentickets-community-edition').'" />
 
-											<?php _e('to','opentickets-community-edition') ?><br/>
+											'._e('to','opentickets-community-edition').'<br/>
 
-											<input type="text" class="use-i18n-datepicker date-text" name="end-date" scope="td" data-link-with=".repeat-options [role='from']"
-													data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>"
-													value="<?php echo $ts ?>" title="<?php _e('End Date','opentickets-community-edition') ?>" role="to" />
-											<input type="text" class="time-text" name="end-time" value="<?php echo date(__('h:ia','opentickets-community-edition'), $end) ?>" title="<?php _e('End Time','opentickets-community-edition') ?>" />
+											<input type="text" class="use-i18n-datepicker date-text" name="end-date" scope="td" data-link-with=".repeat-options [role=\'from\']"
+													data-display-format="'.QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ).'"
+													value="'.$ts.'" title="'._e('End Date','opentickets-community-edition').'" role="to" />
+											<input type="text" class="time-text" name="end-time" value="'.date(__('h:ia','opentickets-community-edition'), $end).'" title="'._e('End Time','opentickets-community-edition').'" />
 
 										</div>
 
 										<div class="event-settings-block subsub">
 											<span class="cb-wrap">
 												<input type="checkbox" name="repeat" value="1" class="togvis" tar=".repeat-options" scope=".option-sub" auto="auto" />
-												<span class="cb-text"><?php _e('Repeat','opentickets-community-edition') ?>...</span>
+												<span class="cb-text">'._e('Repeat','opentickets-community-edition').'...</span>
 											</span>
 										</div>
 
-										<?php do_action('qsot-events-basic-settings', $post, $mb) ?>
+										'.do_action('qsot-events-basic-settings', $post, $mb).'
 									</td>
 
 									<td>
 										<div class="repeat-options hide-if-js">
-											<h4><?php _e('Repeat','opentickets-community-edition') ?></h4>
+											<h4>'._e('Repeat','opentickets-community-edition').'</h4>
 											<div class="repeat-settings subsub">
 												<table class="repeat-settings-wrapper settings-list">
 													<tbody>
 														<tr>
-															<th><?php _e('Repeats','opentickets-community-edition') ?>:</th>
+															<th>'._e('Repeats','opentickets-community-edition').':</th>
 															<td>
 																<select name="repeats" class="togvis" tar=".repeat-options-%VAL%" scope=".repeat-settings" auto="auto">
-																	<?php /* <option value="daily">Daily</option> */ ?>
-																	<option value="weekly" <?php selected(true, true) ?>><?php _e('Weekly','opentickets-community-edition') ?></option>
+																	<option value="weekly" '.selected(true, true).'>'._e('Weekly','opentickets-community-edition').'</option>
 																</select>
 															</td>
 														</tr>
 
 														<tr>
-															<th><?php _e('Repeats Every','opentickets-community-edition') ?>:</th>
+															<th>'._e('Repeats Every','opentickets-community-edition').':</th>
 															<td>
 																<select name="repeat-every">
-																	<?php for ($i=1; $i<=30; $i++): ?>
-																		<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-																	<?php endfor; ?>
+																	<option value="1">1</option>
+																	<option value="2">2</option>
+																	<option value="3">3</option>
+																	<option value="4">4</option>
+																	<option value="5">5</option>
+																	<option value="6">6</option>
+																	<option value="7">7</option>
+																	<option value="8">8</option>
+																	<option value="9">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+																	<option value="21">21</option>
+																	<option value="22">22</option>
+																	<option value="23">23</option>
+																	<option value="24">24</option>
+																	<option value="25">25</option>
+																	<option value="26">26</option>
+																	<option value="27">27</option>
+																	<option value="28">28</option>
+																	<option value="29">29</option>
+																	<option value="30">30</option>
 																</select>
-																<span class="every-descriptor repeat-options-daily hide-if-js"><?php _e('days','opentickets-community-edition') ?></span>
-																<span class="every-descriptor repeat-options-weekly hide-if-js"><?php _e('weeks','opentickets-community-edition') ?></span>
+																<span class="every-descriptor repeat-options-daily hide-if-js">'._e('days','opentickets-community-edition').'</span>
+																<span class="every-descriptor repeat-options-weekly hide-if-js">'._e('weeks','opentickets-community-edition').'</span>
 															</td>
 														</tr>
 
 														<tr class="hide-if-js repeat-options-weekly">
-															<th><?php _e('Repeat on','opentickets-community-edition') ?>:</th>
+															<th>'._e('Repeat on','opentickets-community-edition').':</th>
 															<td>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="0" <?php selected(date('w', $now), 0) ?> />
-																	<span class="cb-text"><?php _e('Su','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="0" '.selected(date('w', $now), 0).' />
+																	<span class="cb-text">'._e('Su','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="1" <?php selected(date('w', $now), 1) ?> />
-																	<span class="cb-text"><?php _e('Mo','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="1" '.selected(date('w', $now), 1).' />
+																	<span class="cb-text">'._e('Mo','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="2" <?php selected(date('w', $now), 2) ?> />
-																	<span class="cb-text"><?php _e('Tu','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="2" '.selected(date('w', $now), 2).' />
+																	<span class="cb-text">'._e('Tu','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="3" <?php selected(date('w', $now), 3) ?> />
-																	<span class="cb-text"><?php _e('We','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="3" '.selected(date('w', $now), 3).' />
+																	<span class="cb-text">'._e('We','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="4" <?php selected(date('w', $now), 4) ?> />
-																	<span class="cb-text"><?php _e('Th','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="4" '.selected(date('w', $now), 4).' />
+																	<span class="cb-text">'._e('Th','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="5" <?php selected(date('w', $now), 5) ?> />
-																	<span class="cb-text"><?php _e('Fr','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="5" '.selected(date('w', $now), 5).' />
+																	<span class="cb-text">'._e('Fr','opentickets-community-edition').'</span>
 																</span>
 																<span class="cb-wrap">
-																	<input type="checkbox" name="repeat-on[]" value="6" <?php selected(date('w', $now), 6) ?> />
-																	<span class="cb-text"><?php _e('Sa','opentickets-community-edition') ?></span>
+																	<input type="checkbox" name="repeat-on[]" value="6" '.selected(date('w', $now), 6).' />
+																	<span class="cb-text">'._e('Sa','opentickets-community-edition').'</span>
 																</span>
 															</td>
 														</tr>
 
 														<tr>
-															<th><?php _e('Starts on','opentickets-community-edition') ?>:</th>
+															<th>'._e('Starts on','opentickets-community-edition').':</th>
 															<td>
 																<input type="text" class="widefat date-text use-i18n-datepicker ends-on" name="repeat-starts" scope=".repeat-options"
-																		data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>"
-																		value="<?php echo esc_attr( $ts ) ?>" role="from" />
+																		data-display-format="'.QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ).'"
+																		value="'.esc_attr( $ts ).'" role="from" />
 															</td>
 														</tr>
 
 														<tr>
-															<th><?php _e('Ends','opentickets-community-edition') ?>:</th>
+															<th>'._e('Ends','opentickets-community-edition').':</th>
 															<td>
 																<ul>
 																	<li>
 																		<span class="cb-wrap">
 																			<input type="radio" name="repeat-ends-type" value="on" checked="checked" />
-																			<span class="cb-text"><?php _e('On','opentickets-community-edition') ?>:</span>
+																			<span class="cb-text">'._e('On','opentickets-community-edition').':</span>
 																		</span>
 																		<input type="text" class="widefat date-text use-i18n-datepicker" name="repeat-ends-on" scope=".repeat-options"
-																				data-display-format="<?php echo QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ) ?>"
-																				value="<?php echo esc_attr( $ts_1_week ) ?>" role="to" />
+																				data-display-format="'.QSOT_Date_Formats::jquery_date_format( 'mm-dd-yy' ).'"
+																				value="'.esc_attr( $ts_1_week ).'" role="to" />
 																	</li>
 																	<li>
 																		<span class="cb-wrap">
 																			<input type="radio" name="repeat-ends-type" value="after" />
-																			<span class="cb-text"><?php _e('After','opentickets-community-edition') ?>:</span>
+																			<span class="cb-text">'._e('After','opentickets-community-edition').':</span>
 																		</span>
-																		<input type="number" class="widefat date-text focus-check" data-scope="li" data-target="input[type='radio']" name="repeat-ends-after" value="15" />
-																		<span> <?php _e('occurences','opentickets-community-edition') ?></span>
+																		<input type="number" class="widefat date-text focus-check" data-scope="li" data-target="input[type=\'radio\']" name="repeat-ends-after" value="15" />
+																		<span>'._e('occurences','opentickets-community-edition').'</span>
 																	</li>
-																	<?php do_action('qsot-events-repeat-ends-type', $post, $mb) ?>
+																	'.do_action('qsot-events-repeat-ends-type', $post, $mb).'
 																</ul>
 															</td>
 														</tr>
-
-														<?php do_action('qsot-events-repeat-options', $post, $mb) ?>
+                                                        '.do_action('qsot-events-repeat-options', $post, $mb).'
 													</tbody>
 												</table>
-											</div>
-										</div>
-									</td>
-								</tr>
+												</div>
+																						</div>
+																					</td>
+																				</tr>
 
-								<?php do_action('qsot-events-date-time-settings-rows', $post, $mb) ?>
-							</tbody>
-						</table>
+																				'.do_action('qsot-events-date-time-settings-rows', $post, $mb).'
+																			</tbody>
+																		</table>';
+
+		echo ($htmlToRender);
+
+		?>
 
 						<div class="clear"></div>
 						<div class="actions">
@@ -2413,27 +2455,29 @@ class qsot_post_type {
 		$current = array(
 			'permalink_slug' => get_option( 'qsot_event_permalink_slug' ),
 		);
-		?>
-			<table class="form-table">
+		$descr = printf(__('Enter a custom base to use. This url segment will prefix the event name in the url.<br/><code>example: %s</code>','opentickets-community-edition'), site_url( '/<strong>event</strong>/my-event_' . date_i18n( 'Y-m-d_H00a' ) . '/' ) );
+		$tableToRender = '<table class="form-table">
 				<tbody>
 					<tr>
-						<th scope="row"><label for="qsot_event_permalink_slug"><?php _e('Event base','opentickets-community-edition') ?></label></th>
+						<th scope="row"><label for="qsot_event_permalink_slug">'._e('Event base','opentickets-community-edition').'</label></th>
 						<td>
-							<input id="qsot_event_permalink_slug" class="widefat" type="text" name="qsot_event_permalink_slug" value="<?php echo esc_attr( $current['permalink_slug'] ) ?>" /><br/>
+							<input id="qsot_event_permalink_slug" class="widefat" type="text" name="qsot_event_permalink_slug" value="'.esc_attr( $current['permalink_slug'] ).'" /><br/>
 							<span class="description">
-								<?php printf(__('Enter a custom base to use. This url segment will prefix the event name in the url.<br/><code>example: %s</code>','opentickets-community-edition'), site_url( '/<strong>event</strong>/my-event_' . date_i18n( 'Y-m-d_H00a' ) . '/' ) ) ?>
+								'.$descr.'
 							</span>
 						</td>
 					</tr>
 				</tbody>
-			</table>
+			</table>';
+		echo ($tableToRender);
+		?>
 			<input type="hidden" name="qsot_event_permalinks_settings" value="<?php echo esc_attr( wp_create_nonce( 'qsot-permalink-settings' ) ) ?>" />
 		<?php
 	}
 
 	public static function permalink_settings_page() {
 		self::_maybe_save_permalink_settings();
-		$wp_settings_sections=''; $wp_settings_fields='';
+		$wp_settings_sections='';
 
 		$wp_settings_sections['permalink']['opentickets-permalink'] = array(
 			'id' => 'opentickets-permalink',

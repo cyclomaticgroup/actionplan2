@@ -64,13 +64,14 @@ class qsot_core_hacks
     {
         wp_reset_vars(array('action'));
         if (isset($_GET['post']))
-            $post_id = $post_ID = (int)$_GET['post'];
+            $post_id = (int)$_GET['post'];
         elseif (isset($_POST['post_ID']))
-            $post_id = $post_ID = (int)$_POST['post_ID'];
+            $post_id = (int)$_POST['post_ID'];
         else
-            $post_id = $post_ID = 0;
+            $post_id = 0;
 
-        $post = $post_type = $post_type_object = null;
+        $post= null;
+        $post_type= null;
 
         if ($post_id)
             $post = get_post($post_id);
@@ -92,11 +93,8 @@ class qsot_core_hacks
 
     public static function view_completed_email($order)
     {
-        $email_exchanger = new WC_Emails();
-
         $email = new WC_Email_Customer_Completed_Order();
         $email->object = $order;
-
         ?>
         <html>
     <head>
@@ -176,10 +174,11 @@ class qsot_core_hacks
         $item = $items[$item_id];
 
         // allow class specification
-        $class = apply_filters('woocommerce_admin_order_items_class', '', $item, $order);
+        apply_filters('woocommerce_admin_order_items_class', '', $item, $order);
 
         //include( trailingslashit($woocommerce->plugin_path).'admin/post-types/writepanels/order-fee-html.php' );
-        if ($template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-fee.php', 'admin'))
+        $template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-fee.php', 'admin');
+        if ($template)
             include($template);
     }
 
@@ -227,7 +226,7 @@ class qsot_core_hacks
             'order_item_type' => 'line_item'
         ));
 
-        $class = apply_filters('woocommerce_admin_order_items_class', $class, $item, $order);
+        apply_filters('woocommerce_admin_order_items_class', $class, $item, $order);
 
         // Add line item meta
         if ($item_id) {
@@ -244,7 +243,8 @@ class qsot_core_hacks
         do_action('woocommerce_ajax_add_order_item_meta', $item_id, $item);
 
         //include( 'admin/post-types/writepanels/order-item-html.php' );
-        if ($template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-item.php', 'admin'))
+        $template = $template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-item.php', 'admin');
+        if ($template)
             include $template;
     }
     // copied from woocommerce/admin/post-types/writepanels/writepanel-order_data.php
@@ -308,9 +308,10 @@ class qsot_core_hacks
                     $post_id = $wpdb->get_var(self::getFastPrep($wpdb, $item));
 
                     $link = $post_id ? admin_url('post.php?post=' . $post_id . '&action=edit') : admin_url('edit.php?s=' . esc_url($item['name']) . '&post_status=all&post_type=shop_coupon');
+                    $liLink = '<li class="tips code" data-tip="'.esc_attr(woocommerce_price( $item['discount_amount'] )).'"><a href="'.$link.'"><span>'.esc_html( $item['name'] ).'</span></a></li>';
+                    echo ($liLink);
                 ?>
-                    <li class="tips code" data-tip=" <?php echo esc_attr(woocommerce_price( $item['discount_amount'] ) ) ?> "><a href="<?php echo $link ?> "><span><?php echo esc_html( $item['name'] ) ?></span></a></li>
-                <?php
+                    <?php
 
                 }
                 ?>
@@ -413,9 +414,11 @@ class qsot_core_hacks
                     $tax_codes[$rate->tax_rate_id] = strtoupper(implode('-', array_filter($code)));
                 }
 
-                foreach ($order->get_taxes() as $item_id => $item)
-                    if ($template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-tax.php', 'admin'))
+                foreach ($order->get_taxes() as $item_id => $item) {
+                    $template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-tax.php', 'admin');
+                    if ($template)
                         include($template);
+                }
                 ?>
             </div>
             <h4><a href="#" class="add_tax_row"><?php _e('+ Add tax row', 'opentickets-community-edition'); ?> <span

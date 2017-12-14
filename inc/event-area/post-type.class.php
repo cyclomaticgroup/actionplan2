@@ -641,9 +641,6 @@ class QSOT_Post_Type_Event_Area {
 		if ( ! is_object( $area_type ) || is_wp_error( $area_type ) )
 			return $classes;
 
-		// store the slug of this area type for later use
-		$slug = $area_type->get_slug();
-
 		// figure out the screen of the current metabox
 		if ( false === $screen ) {
 			$screen = get_current_screen();
@@ -1376,8 +1373,10 @@ class QSOT_Post_Type_Event_Area {
 					// otherwise, use a generic method
 					else
 						$display_name = apply_filters( 'the_title', $event_area->post_title, $event_area->ID );
+
+					$optRender = '<option value="'.esc_attr( $event_area->ID ).'" venue-id="'.$event_area->post_parent.'" capacity="'.esc_attr( $capacity ).'">'.$display_name.'</option>';
+					echo ($optRender);
 				?>
-				<option value="<?php echo esc_attr( $event_area->ID ) ?>" venue-id="<?php echo $event_area->post_parent ?>" capacity="<?php echo esc_attr( $capacity ) ?>"><?php echo $display_name; ?></option>
 			<?php endforeach; ?>
 		<?php
 		$options = ob_get_contents();
@@ -1624,11 +1623,10 @@ class QSOT_Post_Type_Event_Area {
 		
 		// attempt to load the event_area for that event, and if not loaded, then bail
 		$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
-		if ( ! is_object( $event_area ) || ! isset( $event_area->area_type ) || ! is_object( $event_area->area_type ) || ! ( $zoner = $event_area->area_type->get_zoner() ) ) {
+		if ( ! is_object( $event_area ) || ! isset( $event_area->area_type ) || ! is_object( $event_area->area_type ) ) {
 			$resp['e'][] = __( 'Could not find the new event\'s event area.', 'opentickets-community-edition' );
 			return $resp;
 		}
-		$stati = $zoner->get_stati();
 
 		// load the order and if it does not exist, bail
 		$order = wc_get_order( isset( $_POST['order_id'] ) ? (int) $_POST['order_id'] : false );

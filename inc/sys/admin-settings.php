@@ -54,7 +54,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	}
 
 	public static function save() {
-		$current_section=''; $current_tab='';
+		$current_tab='';
 
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'qsot-settings' ) )
             trigger_error("Action failed. Please refresh the page and retry.", E_USER_NOTICE);
@@ -158,7 +158,6 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	}
 
 	public static function output() {
-		$current_section=''; $current_tab='';
 
 		do_action( 'qsot_settings_start' );
 
@@ -189,7 +188,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 		self::show_messages();
 
 		// Get tabs for the settings page
-		$tabs = apply_filters( 'qsot_settings_tabs_array', array() );
+		apply_filters( 'qsot_settings_tabs_array', array() );
 
 		include 'views/html-admin-settings.php';
 	}

@@ -122,7 +122,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 		_deprecated_function( 'filter:' . current_filter(), '1.13.0', null );
 
 		// pass through
-		return $val;
+		return $replacement ? $val: null;
 	}
 
 	// handle the ajax requests for this report

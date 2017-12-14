@@ -156,7 +156,7 @@ class qsot_admin_menu {
 	// create the external links on our menu, which currently can open in a new window
 	// done this way, because currently there is no mechanism to make admin menu items open a new tab!!! wth
 	public static function external_links() {
-		$menu=''; $submenu='';
+		$submenu='';
 
 		// if out opentickets menu exists
 		if ( isset( $submenu['opentickets'] ) ) {
@@ -255,15 +255,10 @@ class qsot_admin_menu {
 	}
 
 	public static function ap_settings_page_head() {
-		$current_tab=''; $current_section='';
 		require_once 'admin-settings.php';
 
 		// Include settings pages
 		qsot_admin_settings::get_settings_pages();
-
-		// Get current tab/section
-		$current_tab     = empty( $_GET['tab'] ) ? 'general' : sanitize_title( $_GET['tab'] );
-		$current_section = empty( $_REQUEST['section'] ) ? '' : sanitize_title( $_REQUEST['section'] );
 
 		if (empty($_POST)) return;
 
