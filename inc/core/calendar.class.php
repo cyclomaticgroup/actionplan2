@@ -240,7 +240,7 @@ class qsot_frontend_calendar {
 	}
 
 	// load the admin js and css
-	public static function load_admin_assets( $exists, $post_id ) {
+	public static function load_admin_assets( ) {
 		wp_enqueue_script( 'qsot-admin-calendar' );
 		self::load_calendar_language();
 		wp_enqueue_style( 'qsot-admin-styles' );
@@ -340,7 +340,7 @@ class qsot_frontend_calendar {
 	}
 
 	// add the js settings that are passed to our custom js, which tells the js the settings for the calendar
-	public static function calendar_settings( $post, $needs_calendar=true, $shortcode='' ) {
+	public static function calendar_settings( $post ) {
 		// generice settings for the calendar
 		wp_localize_script( 'qsot-frontend-calendar', '_qsot_calendar_settings', array(
 			// needs redoing, to include templates and stuff... but sigh, as a patch
@@ -376,7 +376,7 @@ class qsot_frontend_calendar {
 	}
 
 	// run the shortcode logic. it adds the placeholder container for the calendar js to replace/fill with the actual calendar
-	public static function shortcode($atts) {
+	public static function shortcode() {
 		return '<div class="calendar event-calendar"></div>';
 	}
 
@@ -399,7 +399,7 @@ class qsot_frontend_calendar {
 	}
 
 	// grab a list of all the events that meet the supplied criteria
-	public static function handle_ajax( $response, $event ) {
+	public static function handle_ajax( ) {
 
 		// setup the basic posts query to find out events
 		$args = array(
@@ -566,7 +566,7 @@ class qsot_frontend_calendar {
 	}
 
 	// actually save the calendar settings
-	public static function save_page_calendar_settings( $post_id, $post ) {
+	public static function save_page_calendar_settings( $post_id) {
 		//// today = initialize the display on today's date
 		//// first = initialize on the day of the first upcoming event
 		//// manual = initialize the calendar on a specific date

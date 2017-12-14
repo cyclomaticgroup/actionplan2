@@ -74,7 +74,7 @@ class qsot_admin_settings {
 	/**
 	 * Get a report from our reports subfolder
 	 */
-	public function get_report( $name ) {
+	public function get_report() {
 	}
 }
 return new qsot_admin_settings();

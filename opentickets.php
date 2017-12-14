@@ -122,7 +122,7 @@ class QSOT {
 	}
 
 	// add the settings page link to the plugins page
-	public static function plugins_page_actions($actions, $plugin_file, $plugin_data, $context) {
+	public static function plugins_page_actions($actions, $plugin_file) {
 		if ($plugin_file == self::$me && isset($actions['deactivate'])) {
 			$new = array(
 				'settings' => sprintf(
@@ -357,7 +357,7 @@ class QSOT {
 		}
 	}
 
-	public static function overtake_some_woocommerce_core_templates($template, $template_name, $template_path='') {
+	public static function overtake_some_woocommerce_core_templates($template, $template_name) {
 		$default_path = WC()->plugin_path().'/templates/';
 		$default = $default_path.$template_name;
 
@@ -369,7 +369,7 @@ class QSOT {
 		return $template;
 	}
 
-	public static function only_search_parent_events($query, $group, $search_term, $page) {
+	public static function only_search_parent_events($query) {
 		if ( isset( $query['post_type'] ) ) {
 			if ( ! isset( $query['post_type'] ) && (
 				( is_array( $query['post_type'] ) && in_array( self::$o->core_post_type, $query['post_type'] ) ) ||
@@ -737,7 +737,7 @@ class QSOT {
 	}
 
 	// maybe run the activation sequence on plugin update
-	public static function maybe_activation_on_upgrade( $upgrader, $extra ) {
+	public static function maybe_activation_on_upgrade( $extra ) {
 		// if the extra indicates that this upgrade is not for a plugin, then bail
 		if ( 'plugin' !== $extra['type'] )
 			return;
@@ -795,7 +795,7 @@ endif;
 
 // loads a core woo class equivalent of a class this plugin takes over, under a different name, so that it can be extended by this plugin's versions and still use the same original name
 if (!function_exists('qsot_underload_core_class')) {
-	function qsot_underload_core_class($path, $class_name='') {
+	function qsot_underload_core_class($path) {
 		$woocommerce = WC();
 		// eval load WooCommerce Core WC_Coupon class, so that we can change the name, so that we can extend it
 		$f = fopen( $woocommerce->plugin_path() . $path, 'r' );
@@ -808,7 +808,7 @@ if (!function_exists('qsot_underload_core_class')) {
 	class QSOT_underload_filter extends php_user_filter {
 		public static $find = '';
 
-		public function filter($in, $out, &$consumed, $closing) {
+		public function filter($in, $out, &$consumed) {
 			while ($bucket = stream_bucket_make_writeable($in)) {
 				$read = $bucket->datalen;
 				if (strpos($bucket->data, 'class') !== false) {
@@ -853,7 +853,7 @@ if ( ! function_exists( 'qsot_overload_core_class' ) ) {
 	class QSOT_overload_filter extends php_user_filter {
 		public static $replace = '';
 
-		public function filter( $in, $out, &$consumed, $closing ) {
+		public function filter( $in, $out, &$consumed ) {
 			while ( $bucket = stream_bucket_make_writeable( $in ) ) {
 				$read = $bucket->datalen;
 				if ( !empty( self::$replace ) && strpos( $bucket->data, 'extends' ) !== false ) {

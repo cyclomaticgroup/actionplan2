@@ -27,7 +27,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	}
 
 	// add the seating chart order note type
-	public function add_order_note_types( $list, $order ) {
+	public function add_order_note_types( $list) {
 		$list['seating-report-note'] = __( 'Attendee Report note', 'opentickets-community-edition' );
 		return $list;
 	}
@@ -39,7 +39,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 	}
 
 	// when saving the note on the order, make sure to mark our meta if the note type requires it
-	public function save_new_order_note_types( $comment_id, $comment ) {
+	public function save_new_order_note_types( $comment_id ) {
 		update_comment_meta( $comment_id, 'is_seating_report_note', ( is_admin() && isset( $_POST['note_type'] ) && 'seating-report-note' == $_POST['note_type'] ) ? 1 : 0 );
 	}
 

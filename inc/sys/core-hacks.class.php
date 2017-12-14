@@ -120,20 +120,20 @@ class qsot_core_hacks
         return $list;
     }
 
-    public static function do_not_process_product($is, $product, $order_id)
+    public static function do_not_process_product($is, $product)
     {
         if (get_post_meta(QSOT_WC3()->product_data($product, 'id'), '_no_processing', true) == 'yes') $is = false;
         return $is;
     }
 
-    public static function save_product_meta($post_id, $post)
+    public static function save_product_meta($post_id)
     {
         $is_ticket = isset($_POST['_no_processing']) ? 'yes' : 'no';
         update_post_meta($post_id, '_no_processing', $is_ticket);
     }
 
     // add subtotal to fees also, for proper accounting
-    public static function update_service_fee_subtotal_on_order_creation($order_id, $posted)
+    public static function update_service_fee_subtotal_on_order_creation($order_id)
     {
         $order = new WC_Order($order_id);
         foreach ($order->get_fees() as $oiid => $fee) {
@@ -668,7 +668,7 @@ class qsot_core_hacks
         return preg_replace($pattern, $replacement . $prep. '\3', $qwhere);
     }
 
-    public static function save_page($post_id, $post)
+    public static function save_page( $post)
     {
         $opost = clone $post;
         if ($post->post_type == 'revision') $post = get_post($post->post_parent);
@@ -774,7 +774,7 @@ class qsot_core_hacks
         return $list;
     }
 
-    public static function add_sync_billing_field($order)
+    public static function add_sync_billing_field()
     {
         // only allow updating the user's billing information if we require users to signup, creating user accounts
         if (get_option('woocommerce_enable_guest_checkout') != 'yes') {

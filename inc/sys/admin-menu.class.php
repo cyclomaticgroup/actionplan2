@@ -76,12 +76,12 @@ class qsot_admin_menu {
 	}
 
 	// fetch the page slug for a given settings page
-	public static function menu_page_slug( $current, $which='main' ) {
+	public static function menu_page_slug($which='main' ) {
 		return ( ! empty( $which ) && is_scalar( $which ) && isset( self::$menu_slugs[ $which ] ) ) ? self::$menu_slugs[ $which ] : self::$menu_slugs['main'];
 	}
 
 	// fetch the page uri for a settings page in our plugin
-	public static function menu_page_uri( $current, $which='main', $omit_hook=false ) {
+	public static function menu_page_uri( $which='main', $omit_hook=false ) {
 		$page_slug = isset( self::$menu_slugs['main'] ) ? self::$menu_slugs['main'] : '';
 		// figure out the slug for the page
 		if ( ! empty( $which ) && is_scalar( $which ) && isset( self::$menu_slugs[ $which ] ) )

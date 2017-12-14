@@ -261,7 +261,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	}
 
 	// when running the seating report, we need the report to know about our valid reservation states. add then here
-	public function add_state_types_to_report( $list, $event_id ) {
+	public function add_state_types_to_report( $list ) {
 		// get a list of the valid states from our zoner
 		$zoner = $this->get_zoner();
 		$stati = $zoner->get_stati();
@@ -499,7 +499,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 
 	// handle the saving of event areas of this type
 	// registered during area_type registration. then called in inc/event-area/post-type.class.php save_post()
-	public function save_post( $post_id, $post, $updated ) {
+	public function save_post( $post_id) {
 		// check the nonce for our settings. if not there or invalid, then bail
 		if ( ! isset( $_POST['qsot-gaea-n'] ) || ! wp_verify_nonce( $_POST['qsot-gaea-n'], 'save-qsot-gaea-now' ) )
 			return;
@@ -829,7 +829,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	}
 
 	// confirm the tickets defined by an order item
-	public function confirm_tickets( $item, $item_id, $order, $event, $event_area ) {
+	public function confirm_tickets( $item, $item_id, $order, $event_area ) {
 		$cuids = array();
 
 		// figure out the list of session ids to use for the lookup
@@ -864,7 +864,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	}
 
 	// unconfirm the tickets defined by an order item
-	public function unconfirm_tickets( $item, $item_id, $order, $event, $event_area ) {
+	public function unconfirm_tickets( $item, $item_id, $order, $event_area ) {
 		$cuids = array();
 
 		// figure out the list of session ids to use for the lookup
@@ -900,7 +900,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	}
 
 	// cancel the tickets defined by an order item
-	public function cancel_tickets( $item, $item_id, $order, $event, $event_area ) {
+	public function cancel_tickets( $item, $item_id, $order, $event_area ) {
 		$cuids = array();
 
 		// figure out the list of session ids to use for the lookup

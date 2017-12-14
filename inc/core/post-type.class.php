@@ -172,7 +172,7 @@ class qsot_post_type {
 	}
 
 	// handle adjacent_post_link 'where' logic
-	public static function adjacent_post_link_where( $where, $in_same_term, $excluded_terms ) {
+	public static function adjacent_post_link_where( $where) {
 		$post = get_post();
 		// only make changes if we are talking about event posts
 		if ( self::$o->core_post_type == $post->post_type ) {
@@ -195,7 +195,7 @@ class qsot_post_type {
 	}
 
 	// handle adjacent_post_link 'join' logic
-	public static function adjacent_post_link_join( $join, $in_same_term, $excluded_terms ) {
+	public static function adjacent_post_link_join( $join) {
 		$post = get_post();
 		// only make changes if we are talking about event posts
 		if ( self::$o->core_post_type == $post->post_type ) {
@@ -243,7 +243,7 @@ class qsot_post_type {
 		return $list;
 	}
 
-	public static function add_event_name_to_emails($item_id, $item, $order) {
+	public static function add_event_name_to_emails($item) {
 		$format = '<br/><small><strong>';
 		if (!isset($item['event_id']) || empty($item['event_id'])) return;
 		$event = apply_filters('qsot-get-event', false, $item['event_id']);
@@ -286,7 +286,7 @@ class qsot_post_type {
 	}
 
 	// based on $args, determine the start and ending date of a set of events
-	public static function get_date_range($current, $args='') {
+	public static function get_date_range( $args='') {
 		$args = wp_parse_args( apply_filters('qsot-event-date-range-args', $args), array(
 			'event_id' => 0,
 			'with__self' => false,
@@ -353,7 +353,7 @@ class qsot_post_type {
 	}
 
 	// figure out the timestamp of when to stop selling tickets for a given event, based on the event settings and the global settings. then determine if we are past that cut off or not
-	public static function check_event_sale_time( $current, $event_id ) {
+	public static function check_event_sale_time( $event_id ) {
 		// grab the value stored on the event
 		$formula = get_post_meta( $event_id, '_stop_sales_before_show', true );
 
@@ -670,7 +670,7 @@ class qsot_post_type {
 	}
 */
 
-	public static function events_query_fields($fields, $q) {
+	public static function events_query_fields($fields) {
 		return $fields;
 	}
 
@@ -686,7 +686,7 @@ class qsot_post_type {
 	}
 
 	// add the event metadata to event type posts, preventing the need to call this 'meta addtion' code elsewhere
-	public static function the_posts_add_meta( $posts, $q ) {
+	public static function the_posts_add_meta( $posts) {
 		foreach ( $posts as $i => $post ) {
 			if ( $post->post_type == self::$o->core_post_type ) {
 				$posts[ $i ] = apply_filters( 'qsot-event-add-meta', $post, $post->ID );
@@ -792,7 +792,7 @@ class qsot_post_type {
 	}
 
 	// maybe prevent editing the quantity of tickets in the cart, based on settings
-	public static function maybe_prevent_ticket_quantity_edit( $current, $cart_item_key, $cart_item=array() ) {
+	public static function maybe_prevent_ticket_quantity_edit( $current, $cart_item=array() ) {
 		// figure out the limit for this event
 		$limit = isset( $cart_item['event_id'] ) ? apply_filters( 'qsot-event-ticket-purchase-limit', 0, $cart_item['event_id'] ) : 0;
 
@@ -944,7 +944,7 @@ class qsot_post_type {
 		wp_register_script('qsot-frontend-ajax', self::$o->core_url.'assets/js/utils/ajax.js', array('qsot-tools'), self::$o->version);
 	}
 
-	public static function load_frontend_assets(&$wp) {
+	public static function load_frontend_assets() {
 		if (is_singular(self::$o->core_post_type) && ($post = get_post()) && $post->post_parent != 0) {
 			do_action('qsot-frontend-event-assets', $post);
 		}
@@ -986,7 +986,7 @@ class qsot_post_type {
 	// again for users that it does not apply to. since we want anyone with the read_private_pages to be able to see it, but anyone without to not see it, we need it there by default (so we don't
 	// have to modify core WP) and then filter it out for anyone cannot see it. to do this we need to assert specific conditions are true, and if they do not pass, we need to filter out
 	// the status from the query.
-	public static function hide_hidden_posts_where($where, &$query) {
+	public static function hide_hidden_posts_where($where) {
 		// first, before thinking about making changes to the query, make sure that we are actually querying for our event post type. there are two cases where our event post type could be
 		// being queried for, but we are only concerned with one. i'll explain both. the one we are not concerned with: if the where clause does not specifically filter for post_type, then
 		// we could technically get an event post in the result. we are not concerned with this, because, except for some rare outlier situations and intentional circumventing of this rule,
@@ -1313,7 +1313,7 @@ class qsot_post_type {
 	}
 
 	// save function for the parent events
-	public static function save_event( $post_id, $post ) {
+	public static function save_event($post ) {
 		if ( $post->post_type != self::$o->core_post_type ) return; // only run for our event post type
 		if ( $post->post_parent != 0 ) return; // this is only for parent event posts
 
@@ -1329,7 +1329,7 @@ class qsot_post_type {
 	}
 
 	// handle the saving of an individual child event
-	public static function save_child_event( $post_id, $post=null, $updated=false ) {
+	public static function save_child_event( $post_id, $post=null) {
 		static $ran_for = array();
 		// only run this function once for a post
 		if ( isset( $ran_for[ 'post-' . $post_id ] ) )
@@ -1402,7 +1402,7 @@ class qsot_post_type {
 	}
 
 	// save the event title settings from the 'Event Titles' metabox
-	public static function save_event_title_settings( $post_id, $post, $was_updated ) {
+	public static function save_event_title_settings( $post_id ) {
 		remove_action( 'wp_insert_post', array( __CLASS__, 'save_event_title_settings' ), 100 );
 		$data = $_POST;
 
@@ -1426,7 +1426,7 @@ class qsot_post_type {
 	}
 
 	// handle the saving of sub events, when a parent event is saved in the admin
-	public static function save_sub_events( $post_id, $post, $was_updated ) {
+	public static function save_sub_events( $post_id ) {
 		remove_action( 'wp_insert_post', array( __CLASS__, 'save_sub_events' ), 100 );
 		$data = $_POST;
 
@@ -1796,7 +1796,7 @@ class qsot_post_type {
 	}
 
 	// add meta boxes on the edit event pages
-	public static function core_setup_meta_boxes( $post_type ) {
+	public static function core_setup_meta_boxes( ) {
 	    $post='';
 
 		// some only belong on parent event edit pages
@@ -1854,7 +1854,7 @@ class qsot_post_type {
 	}
 
 	// metabox for editing a single event's settings
-	public static function mb_single_event_settings( $post, $mb ) {
+	public static function mb_single_event_settings( $post ) {
 		// load actual start/end datetime
 		$start = get_post_meta( $post->ID, '_start', true );
 		$start_c = QSOT_Utils::fake_utc_date( $start );
@@ -1909,7 +1909,7 @@ class qsot_post_type {
 	}
 
 	// render the metabox that allows control over whether event titles include the date and time
-	public static function mb_event_title_settings( $post, $mb ) {
+	public static function mb_event_title_settings( $post ) {
 		// load the current settings
 		$current = array(
 			'show_date' => get_post_meta( $post->ID, '_qsot_show_date', true ),
@@ -1986,7 +1986,7 @@ class qsot_post_type {
 	}
 
 	// metabox to allow control of various settings directly dealing with the selling of tickets
-	public static function mb_ticket_sales_settings( $post, $mb ) {
+	public static function mb_ticket_sales_settings( $post ) {
 		// mapped list of settings to their post meta and site options
 		$map = array(
 			'formula' => array( '_stop_sales_before_show', 'qsot-stop-sales-before-show' ),
@@ -2060,7 +2060,7 @@ class qsot_post_type {
 	}
 
 	// allows control over the start and end time of a run of events
-	public static function mb_event_run_date_range( $post, $mb ) {
+	public static function mb_event_run_date_range( $post) {
 		// adjust the start and end times for our WP offset setting
 		$start = QSOT_Utils::to_c( get_post_meta( $post->ID, '_start', true ) );
 		$end = QSOT_Utils::to_c( get_post_meta( $post->ID, '_end', true ) );

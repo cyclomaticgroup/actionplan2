@@ -295,7 +295,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// add the column to the event area posts list page
-	public function add_custom_event_area_columns( $columns, $post_type='' ) {
+	public function add_custom_event_area_columns( $columns ) {
 		$new_columns = array();
 		// add the new column after the title column
 		foreach ( $columns as $key => $val ) {
@@ -344,7 +344,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// count the total number of tickets in the ticket table, based on some supplied args
-	public function count_tickets( $current, $args='' ) {
+	public function count_tickets( $args='' ) {
 		// normalize the args
 		$args = wp_parse_args( $args, array(
 			'state' => '*',
@@ -409,7 +409,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// draw the featured image for the event area, based on the event area types
-	public function draw_event_area_image( $event, $area, $reserved, $total_reserved=false ) {
+	public function draw_event_area_image( $event, $area, $reserved) {
 		// make sure we have the event area type handy
 		if ( ! is_object( $area ) || ! isset( $area->area_type ) || ! is_object( $area->area_type ) )
 			$area = apply_filters( 'qsot-event-area-for-event', $area, $event->ID );
@@ -439,7 +439,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// get the event area based on the event
-	public function get_event_area_for_event( $current, $event_id ) {
+	public function get_event_area_for_event( $event_id ) {
 		// normalize the event_id
 		if ( is_object( $event_id ) && isset( $event_id->ID ) )
 			$event_id = $event_id->ID;
@@ -457,7 +457,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// get the event area based on the event
-	public function get_event_area_type_for_event( $current, $event_id ) {
+	public function get_event_area_type_for_event( $event_id ) {
 		static $cache = array();
 		// normalize the event_id
 		if ( is_object( $event_id ) && isset( $event_id->ID ) )
@@ -711,7 +711,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// draw the box that allows selection of the venue this seating chart belongs to
-	public function mb_render_venue( $post, $mb ) {
+	public function mb_render_venue( $post ) {
 		// get a complete list of available venues
 		$venues = get_posts( array(
 			'post_type' => 'qsot-venue',
@@ -754,7 +754,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// during cart loading from session, we need to make sure we load all preserved keys
-	public function load_item_data( $current, $values, $key ) {
+	public function load_item_data( $current, $values) {
 		// get a list of all the preserved keys from our event area types, and add it to the list of keys that need to be loaded
 		foreach ( apply_filters( 'qsot-ticket-item-meta-keys', array() ) as $k )
 			if ( isset( $values[ $k ] ) )
@@ -784,12 +784,12 @@ class QSOT_Post_Type_Event_Area {
 
 	// on the edit order screen, for each ticket order item, add the 'view' version of the ticket information
 	public function before_view_item_meta( $item_id, $item, $product ) {
-		self::_draw_item_ticket_info( $item_id, $item, $product, false );
+		self::_draw_item_ticket_info( $item_id, $item, $product);
 	}
 
 	// on the edit order screen, for each ticket order item, add the 'edit' version of the ticket information
 	public function before_edit_item_meta( $item_id, $item, $product ) {
-		self::_draw_item_ticket_info( $item_id, $item, $product, true );
+		self::_draw_item_ticket_info( $item_id, $item, $product);
 	}
 
 	// when saving the order items on the edit order page, we may need to update the reservations table
@@ -841,7 +841,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// add the relevant ticket information and meta to each order item that needs it, along with a change button for event swaps
-	protected function _draw_item_ticket_info( $item_id, $item, $product, $edit=false ) {
+	protected function _draw_item_ticket_info( $item_id, $item, $product ) {
 		// if the product is not a ticket, then never display event meta
 		if ( ! is_object( $product ) || get_post_meta( $product->get_id(), '_ticket', true ) != 'yes' )
 			return;
@@ -1081,7 +1081,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// once the order has been created, make all the attached tickets confirmed
-	public function order_has_been_created( $order_id, $posted_data ) {
+	public function order_has_been_created( $order_id ) {
 		// load the order
 		$order = wc_get_order( $order_id );
 		
@@ -1120,7 +1120,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// when creating a new order, we need to update the related ticket rows with the new order id
-	public function update_order_id_and_status( $order_id, $posted ) {
+	public function update_order_id_and_status( $order_id ) {
 		// load the order
 		$order = wc_get_order( $order_id );
 		
@@ -1152,7 +1152,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// actually perform the update
-	protected function _update_order_id( $order, $item, $item_id, $event, $event_area, $area_type ) {
+	protected function _update_order_id( $order, $item, $item_id, $event_area, $area_type ) {
 		$wpdb='';
 		$cuids = array();
 
@@ -1187,7 +1187,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// when the order status changes, change make sure to update the ticket purchase count
-	public function order_status_changed( $order_id, $old_status, $new_status ) {
+	public function order_status_changed( $order_id, $new_status ) {
 		// if the status is a status that should have it's count, counted, then do so
 		if ( in_array( $new_status, apply_filters( 'qsot-zoner-confirmed-statuses', array( 'on-hold', 'processing', 'completed' ) ) ) ) {
 			// load the order
@@ -1248,7 +1248,7 @@ class QSOT_Post_Type_Event_Area {
 	*/
 	
 	// separate function to handle the order status changes to 'cancelled'
-	public function order_status_changed_cancel( $order_id, $old_status, $new_status ) {
+	public function order_status_changed_cancel( $order_id, $new_status ) {
 		// if the order is actually getting cancelled, or any other status that should be considered an 'cancelled' step
 		if ( in_array( $new_status, apply_filters( 'qsot-zoner-cancelled-statuses', array( 'cancelled' ) ) ) ) {
 			// load the order
@@ -1303,7 +1303,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// fix the problem where ppl click order again
-	public function adjust_order_again_items( $meta, $item, $order ) {
+	public function adjust_order_again_items( $meta, $item ) {
 		// if the original item is not for an event, then bail now
 		if ( ! isset( $item['event_id'] ) )
 			return $meta;
@@ -1347,7 +1347,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// add the form field that controls the event area selection for events, on the edit event page
-	public function event_area_bulk_edit_settings( $list, $post, $mb ) {
+	public function event_area_bulk_edit_settings( $list ) {
 		// get a list of all event areas
 		$eaargs = array(
 			'post_type' => 'qsot-event-area',
@@ -1420,7 +1420,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// when saving a sub event, we need to make sure to save what event area it belongs to
-	public function save_sub_event_settings( $settings, $parent_id, $parent ) {
+	public function save_sub_event_settings( $settings ) {
 		// cache the product price lookup becasue it can get heavy
 		static $ea_price = array();
 
@@ -1453,7 +1453,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// during page load of the edit event page, we need to load all the data about the child events. this will add the event_area data to the child event
-	public function load_child_event_settings( $settings, $defs, $event ) {
+	public function load_child_event_settings( $settings, $event ) {
 		// if we know the event to set the data on, then...
 		if ( is_object( $event ) && isset( $event->ID ) ) {
 			// load the event area id that is currently set for this sub event
@@ -1526,7 +1526,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// add the button that allows an admin to add a ticket to an order
-	public function add_tickets_button( $order ) {
+	public function add_tickets_button( ) {
 		?><button type="button" class="button add-order-tickets" rel="add-tickets-btn"><?php _e( 'Add tickets', 'opentickets-community-edition' ); ?></button><?php
 	}
 
@@ -1562,7 +1562,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// function to update the purchases on events that recently had tickets released
-	public function delete_order_item_update_event_purchases( $item_id ) {
+	public function delete_order_item_update_event_purchases( ) {
 		// if there were events with removed tickets, then recalc the purchased tickets
 		if ( ! empty( $this->event_ids_with_removed_tickets ) )
 			foreach ( $this->event_ids_with_removed_tickets as $event_id => $_ )
@@ -1570,7 +1570,7 @@ class QSOT_Post_Type_Event_Area {
 	}
 
 	// load the event area information and attach it to the ticket information. used when rendering the ticket
-	public function add_event_area_data( $current, $oiid, $order_id ) {
+	public function add_event_area_data( $current) {
 		// skip this function if the ticket has not already been loaded, or if it is a wp error
 		if ( ! is_object( $current ) || is_wp_error( $current ) )
 			return $current;
