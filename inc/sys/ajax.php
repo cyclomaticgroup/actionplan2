@@ -48,7 +48,7 @@ class QSOT_Ajax {
 		add_action( 'wp_ajax_nopriv_qsot-frontend-ajax', array( &$this, 'handle_request' ) );
 
 		// register some generic requests
-		$this->register( 'find-product', array( &$this, 'aj_find_product' ), array( array( 'edit_products' ) ) );
+		return $this->register( 'find-product', array( &$this, 'aj_find_product' ), array( array( 'edit_products' ) ) );
 	}
 
 	// destroy the object
@@ -327,4 +327,4 @@ class QSOT_Ajax {
 
 // security
 if ( defined( 'ABSPATH' ) && function_exists( 'add_action' ) )
-	QSOT_Ajax::instance();
+    echo $QSOT = QSOT_Ajax::instance();

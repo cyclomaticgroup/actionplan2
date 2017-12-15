@@ -242,7 +242,8 @@ class qsot_frontend_calendar {
 	// load the admin js and css
 	public static function load_admin_assets( ) {
 		wp_enqueue_script( 'qsot-admin-calendar' );
-		self::load_calendar_language();
+		$fullcalendar = self::load_calendar_language();
+        echo str_replace("fullcalendar"," ",$fullcalendar);
 		wp_enqueue_style( 'qsot-admin-styles' );
 		do_action( 'qsot-calendar-settings' );
 	}
@@ -294,8 +295,9 @@ class qsot_frontend_calendar {
 		if ( $needs_calendar ) {
 			// queue the basics
 			wp_enqueue_script( 'qsot-frontend-calendar' );
-			self::load_calendar_language();
-			wp_enqueue_style( 'qsot-frontend-calendar-style' );
+			$fullcalendar = self::load_calendar_language();
+            echo str_replace("fullcalendar"," ",$fullcalendar);
+            wp_enqueue_style( 'qsot-frontend-calendar-style' );
 			do_action( 'qsot-calendar-settings' );
 
 			// get the site language, so we can load the appropriate calendar language template

@@ -305,7 +305,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		// start by making sure we have a cart
 		$cart = WC()->cart;
 		if ( ! is_object( $cart ) ) {
-			$this->get_zoner()->remove( $args );
+			echo $zoner = $this->get_zoner()->remove( $args );
 			return new WP_Error( 'no_cart', __( 'Could not add those items to your cart.', 'opentickets-community-edition' ) );
 		}
 
@@ -1299,4 +1299,4 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 
 // security
 if ( defined( 'ABSPATH' ) && function_exists( 'add_action' ) )
-	QSOT_General_Admission_Area_Type::instance();
+	echo $QSOT = QSOT_General_Admission_Area_Type::instance();

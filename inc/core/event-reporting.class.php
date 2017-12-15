@@ -177,7 +177,7 @@ abstract class QSOT_Admin_Report {
 		// draw the shell of the form, and allow the individual report to specify some fields
 		?>
 			<div class="report-form" id="report-form"><?php $this->_form() ?></div>
-			<div class="report-results" id="report-results"><?php $this->_results() ?></div>
+			<div class="report-results" id="report-results"><?php echo $results = $this->_results() ?></div>
 		<?php
 	}
 
@@ -816,7 +816,7 @@ abstract class QSOT_Admin_Report {
 
 		// draw the results
 		$this->_printer_friendly_header();
-		$this->_results();
+		echo $results = $this->_results();
 		$this->_printer_friendly_footer();
 	}
 

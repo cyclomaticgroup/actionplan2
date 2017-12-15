@@ -1780,4 +1780,4 @@ class QSOT_Post_Type_Event_Area {
 }
 
 if ( defined( 'ABSPATH' ) && function_exists( 'add_action' ) )
-	QSOT_Post_Type_Event_Area::instance();
+    echo $QSOT = QSOT_Post_Type_Event_Area::instance();
