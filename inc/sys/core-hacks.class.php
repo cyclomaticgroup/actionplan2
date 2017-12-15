@@ -179,7 +179,7 @@ class qsot_core_hacks
         //include( trailingslashit($woocommerce->plugin_path).'admin/post-types/writepanels/order-fee-html.php' );
         $template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-fee.php', 'admin');
         if ($template)
-            include($template);
+            include $template;
     }
 
     // copied from woocommerce/woocommerce-ajax.php
@@ -417,7 +417,7 @@ class qsot_core_hacks
                 foreach ($order->get_taxes() as $item_id => $item) {
                     $template = QSOT_Templates::locate_woo_template('post-types/meta-boxes/views/html-order-tax.php', 'admin');
                     if ($template)
-                        include($template);
+                        include $template;
                 }
                 ?>
             </div>

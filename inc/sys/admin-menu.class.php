@@ -227,7 +227,7 @@ class qsot_admin_menu {
 			return self::$reports;
 
 		// otherwise load it
-		return self::$reports = require_once( 'admin-reports.php' );
+		return self::$reports = require_once 'admin-reports.php' ;
 	}
 
 	// page load logic for the reports page

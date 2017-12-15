@@ -27,13 +27,13 @@ class qsot_admin_settings extends WC_Admin_Settings {
 			$settings = array();
 
 			// load the woocoomerce settings api
-			include_once( WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php' );
-			include_once( QSOT::plugin_dir() . 'inc/sys/settings-page.abstract.php' );
+			include_once WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php';
+			include_once QSOT::plugin_dir() . 'inc/sys/settings-page.abstract.php';
 
 			// load the various settings pages
-			$settings[] = include( 'settings/general.php' );
-			$settings[] = include( 'settings/frontend.php' );
-			$settings[] = include( 'settings/dates.php' );
+			$settings[] = include 'settings/general.php';
+			$settings[] = include 'settings/frontend.php';
+			$settings[] = include 'settings/dates.php';
 
 			// allow adding of other pages if needed
 			self::$settings = array_filter( array_values( apply_filters( 'qsot_get_settings_pages', $settings ) ) );

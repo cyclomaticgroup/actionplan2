@@ -301,7 +301,7 @@ class QSOT {
 
 			foreach ($paths as $path) {
 				if (is_readable($path.$file)) {
-					include_once($path.$file);
+					include_once $path.$file;
 					return;
 				}
 			}
@@ -312,7 +312,7 @@ class QSOT {
 
 			foreach ($paths as $path) {
 				if (is_readable($path.$file)) {
-					include_once($path.$file);
+					include_once $path.$file;
 					return;
 				}
 			}
@@ -323,7 +323,7 @@ class QSOT {
 
 			foreach ($paths as $path) {
 				if (is_readable($path.$file)) {
-					include_once($path.$file);
+					include_once $path.$file;
 					return;
 				}
 			}
@@ -337,7 +337,7 @@ class QSOT {
 
 			foreach ($paths as $path) {
 				if (is_readable($path.$file)) {
-					include_once($path.$file);
+					include_once $path.$file;
 					return;
 				}
 			}
@@ -350,7 +350,7 @@ class QSOT {
 
 			foreach ($paths as $path) {
 				if (is_readable($path.$file)) {
-					include_once($path.$file);
+					include_once $path.$file;
 					return;
 				}
 			}

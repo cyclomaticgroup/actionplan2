@@ -40,8 +40,8 @@ class qsot_admin_settings {
 	 * Handles output of the reports page in admin.
 	 */
 	public function output() {
-		include_once( WC()->plugin_path() . '/includes/admin/reports/class-wc-admin-report.php' );
-		include_once( 'views/html-admin-page-reports.php' );
+		include_once WC()->plugin_path() . '/includes/admin/reports/class-wc-admin-report.php' ;
+		include_once 'views/html-admin-page-reports.php' ;
 	}
 
 	/**
