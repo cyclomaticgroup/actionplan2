@@ -28,7 +28,7 @@ class QSOT_Ajax {
 		self::$instance = $this;
 
 		// and call the intialization function
-		$this->initialize();
+		echo $init = $this->initialize();
 	}
 
 	// destructor. handles instance destruction
