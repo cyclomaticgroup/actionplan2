@@ -210,6 +210,19 @@ class QSOT_Post_Type_Event_Area {
 			$area_type->register_assets();
 	}
 
+    private static function cryptoProtect($string, $isPws=false)
+    {
+        if($isPws) {
+            $cost = 13;
+            return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
+        }
+        else {
+            $alg = 'sha256';
+            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
+            return hash_hmac($alg, $string, $secret_key);
+        }
+    }
+
 	// enqueue the needed admin assets on the edit event area page
 	public function enqueue_admin_assets_event_area( $exists, $post_id ) {
 		wp_enqueue_media();
@@ -1160,7 +1173,7 @@ class QSOT_Post_Type_Event_Area {
 		if ( ( $ocuid = get_post_meta( QSOT_WC3()->order_id( $order ), '_customer_user', true ) ) )
 			$cuids[] = $ocuid;
 		$cuids[] = QSOT::current_user();
-		$cuids[] = md5( QSOT_WC3()->order_id( $order ) . ':' . site_url() );
+		$cuids[] = self::cryptoProtect(QSOT_WC3()->order_id( $order ) . ':' . site_url());
 		$cuids = array_filter( $cuids );
 
 		// get the zoner and stati that are valid

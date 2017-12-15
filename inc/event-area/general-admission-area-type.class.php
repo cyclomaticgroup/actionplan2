@@ -102,6 +102,19 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		wp_register_script( 'qsot-gaea-event-frontend', $url . 'assets/js/features/event-area/ui.js', array( 'qsot-tools' ), $version );
 	}
 
+    private static function cryptoProtect($string, $isPws=false)
+    {
+        if($isPws) {
+            $cost = 13;
+            return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
+        }
+        else {
+            $alg = 'sha256';
+            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
+            return hash_hmac($alg, $string, $secret_key);
+        }
+    }
+
 	// enqueue the appropriate assets for the frontend
 	public function enqueue_assets( $event ) {
 		// if we do not have the required info, then bail
@@ -164,7 +177,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	// get the frontend template to use in the event selection ui
 	public function get_templates( $event ) {
 		// make sure we have an event area
-		$event->event_area = isset( $event->event_area ) && is_object( $event->event_area ) ? $event->event_area : apply_filters( 'qsot-event-area-for-event', false, $post );
+		$event->event_area = isset( $event->event_area ) && is_object( $event->event_area ) ? $event->event_area : apply_filters( 'qsot-event-area-for-event', false);
 
 		// if there is no event area, then bail
 		if ( ! isset( $event->event_area ) || ! is_object( $event->event_area ) )
@@ -670,14 +683,14 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		// if the quantity is not a positive number, then bail
 		if ( $qty <= 0 ) {
 			$resp['e'][] = __( 'The quantity must be greater than zero.', 'opentickets-community-edition' );
-			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-reserve', $resp, $event, null, $ticket_type ), $event );
+			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-reserve', $resp, $event, null ), $event );
 		}
 
 		// get the event_area based on the event
 		$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
 		if ( ! is_object( $event_area ) ) {
 			$resp['e'][] = __( 'Could not find that event.', 'opentickets-community-edition' );
-			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-reserve', $resp, $event, null, $ticket_type ), $event );
+			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-reserve', $resp, $event, null ), $event );
 		}
 
 		// determine the ticket type to use for the 
@@ -720,7 +733,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
 		if ( ! is_object( $event_area ) ) {
 			$resp['e'][] = __( 'Could not find that event.', 'opentickets-community-edition' );
-			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-remove', $resp, $event, null, $ticket_type ), $event );
+			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-remove', $resp, $event, null ), $event );
 		}
 
 		// determine the ticket type to use for the 
@@ -781,14 +794,14 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		// if the quantity is not a positive number, then bail
 		if ( $qty <= 0 ) {
 			$resp['e'][] = __( 'The quantity must be greater than zero.', 'opentickets-community-edition' );
-			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-update', $resp, $event, null, $ticket_type ), $event );
+			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-update', $resp, $event, null ), $event );
 		}
 
 		// get the event_area based on the event
 		$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
 		if ( ! is_object( $event_area ) ) {
 			$resp['e'][] = __( 'Could not find that event.', 'opentickets-community-edition' );
-			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-update', $resp, $event, null, $ticket_type ), $event );
+			return $this->_add_data( apply_filters( 'qsot-seating-ajax-response-update', $resp, $event, null ), $event );
 		}
 
 		// determine the ticket type to use for the 
@@ -836,7 +849,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		if ( ( $ocuid = get_post_meta( QSOT_WC3()->order_id( $order ), '_customer_user', true ) ) )
 			$cuids[] = $ocuid;
 		$cuids[] = QSOT::current_user();
-		$cuids[] = md5( QSOT_WC3()->order_id( $order ) . ':' . site_url() );
+		$cuids[] = self::cryptoProtect(QSOT_WC3()->order_id( $order ) . ':' . site_url());
 		$cuids = array_filter( $cuids );
 
 		// get the zoner and stati that are valid
@@ -871,7 +884,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		if ( ( $ocuid = get_post_meta( QSOT_WC3()->order_id( $order ), '_customer_user', true ) ) )
 			$cuids[] = $ocuid;
 		$cuids[] = QSOT::current_user();
-		$cuids[] = md5( QSOT_WC3()->order_id( $order ) . ':' . site_url() );
+		$cuids[] = self::cryptoProtect(QSOT_WC3()->order_id( $order ) . ':' . site_url());
 		$cuids = array_filter( $cuids );
 
 		// get the zoner and stati that are valid
@@ -907,7 +920,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		if ( ( $ocuid = get_post_meta( QSOT_WC3()->order_id( $order ), '_customer_user', true ) ) )
 			$cuids[] = $ocuid;
 		$cuids[] = QSOT::current_user();
-		$cuids[] = md5( QSOT_WC3()->order_id( $order ) . ':' . site_url() );
+		$cuids[] = self::cryptoProtect(QSOT_WC3()->order_id( $order ) . ':' . site_url());
 		$cuids = array_filter( $cuids );
 
 		// get the zoner and stati that are valid
@@ -1154,9 +1167,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 			foreach ( $args as $k => $v )
 				wc_add_order_item_meta( $item_id, '_' . $k, $v );
 
-			$item                       = new WC_Order_Item_Product();
-			$item->legacy_values        = $values; // @deprecated For legacy actions.
-			$item->legacy_cart_item_key = $cart_item_key; // @deprecated For legacy actions.
+			$item = new WC_Order_Item_Product();
 			$item->set_props( array(
 				'quantity'     => isset( $args['qty'] ) ? $args['qty'] : ( isset( $args['quantity'] ) ? $args['quantity'] : 1 ),
 				'variation'    => isset( $args['variation'] ) ? $args['variation'] : '',

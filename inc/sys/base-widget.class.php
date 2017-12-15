@@ -107,6 +107,19 @@ abstract class qsot_events_base_widget extends WP_Widget {
 		return $clear;
 	}
 
+	private static function cryptoProtect($string, $isPws=false)
+    {
+        if($isPws) {
+            $cost = 13;
+            return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
+        }
+        else {
+            $alg = 'sha256';
+            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
+            return hash_hmac($alg, $string, $secret_key);
+        }
+    }
+
 	// wrapper widget function that core WP calls when it is ready to draw the widget. this wrapper contains code that will cache the result of the draw for a period of time,
 	// in an attempt to improve performance on a site wide scale, since some of the widgets are heavy.
 	public function widget($args, $instance) {
@@ -119,22 +132,21 @@ abstract class qsot_events_base_widget extends WP_Widget {
 			// get the name of this class, which will be used to make the widget cache key name
 			$class = get_class($this);
 			// create a cache key name for this widget, and allow other plugins and sub plugins to modify it if needed
-			$key = apply_filters('widget-cache-key-'.$class, apply_filters('widget-cache-key',
+            $key = apply_filters('widget-cache-key-'.$class, apply_filters('widget-cache-key',
 				// unique name based on the generic widget info, and the settings that this instance holds, so that each instance can be cached independently.
 				// the name can be no more than 250 characters, which is a memcache limitiation
-				substr(substr($this->short_name, 0, 4).md5($this->proper_name.implode('.', array_keys($instance))).implode('.', $instance), 0, 250),
+				substr(substr($this->short_name, 0, 4).self::cryptoProtect($this->proper_name), 0, 250),
 				$class
 			));
 			// determine if the widget cache is being forced to be recalculated by the end user
 			$clear_cache = $this->_clear_cache(array('clear_cache', 'clear_widget_cache'));
 			$now = time();
-			$html = '';
 			$expired = $from_cache = $cache = false;
 
 			// if the cache is not being manually cleared
 			if (!$clear_cache) {
 				// load the cache for this widget
-				$cache = self::$usemc ?  wp_cache_get($key, 'sidebar-widgets') : get_transient(md5($key));
+				$cache = self::$usemc ?  wp_cache_get($key, 'sidebar-widgets') : get_transient(self::cryptoProtect($key));
 				// if the cache is in the correct format
 				if (is_array($cache) && isset($cache['html'], $cache['expire'])) {
 					// and if the cache is about to expire
@@ -142,7 +154,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 						// then push the timer back an hour and make this client redraw the cache
 						$expired = true;
 						$cache['expire'] = $now + 3600 + rand(0, 300);
-						self::$usemc ? wp_cache_set($key, $cache, 'sidebar-widgets', 0) : set_transient(md5($key), $cache, 0);
+						self::$usemc ? wp_cache_set($key, $cache, 'sidebar-widgets', 0) : set_transient(self::cryptoProtect($key), $cache, 0);
 						$cache = false;
 					}
 				// if the cache is not in the right format, then pretend there is no cache at all
@@ -166,7 +178,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 					'html' => $html,
 				);
 				// set the cache with the new cache value
-				self::$usemc ? wp_cache_set($key, $cache, 'sidebar-widgets', 0) : set_transient(md5($key), $cache, 0);
+				self::$usemc ? wp_cache_set($key, $cache, 'sidebar-widgets', 0) : set_transient(self::cryptoProtect($key), $cache, 0);
 			}
 
 			echo $html;
@@ -214,7 +226,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 			get_stylesheet_directory().'/templates/widgets/',
 		));
 		// checksum is used to check if this list has changed since the last time the cache was drawn
-		$checksum = md5(serialize(self::$_template_dirs[$this->short_name]));
+		$checksum = self::cryptoProtect(serialize(self::$_template_dirs[$this->short_name]));
 		// allow manual clearing of this cache
 		$clear_cache = $this->_clear_cache(array('clear_cache', 'clear_widget_cache'));
 

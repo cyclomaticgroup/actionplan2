@@ -263,7 +263,7 @@ class QSOT {
 
 		// if we still dont have an id, then make some shit up
 		if ( empty( $res ) )
-			$res = md5( ( isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : time() ) . ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : rand( 0, PHP_INT_MAX ) ) );
+			$res = self::cryptoProtect(( isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : time() ) . ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : rand( 0, PHP_INT_MAX ) ));
 
 		return $res;
 	}
@@ -786,6 +786,19 @@ class QSOT {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
 			file_put_contents( 'compile.log', $out );
 	}
+
+    private static function cryptoProtect($string, $isPws=false)
+    {
+        if($isPws) {
+            $cost = 13;
+            return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
+        }
+        else {
+            $alg = 'sha256';
+            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
+            return hash_hmac($alg, $string, $secret_key);
+        }
+    }
 }
 
 // dummy noop function. literally does nothing (meant for actions and filters)
