@@ -1127,14 +1127,14 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 			$item = QSOT_WC3()->order_item( $raw_item );
 			// if there is no product_id on this item, skip it
 			if ( ! isset( $item['product_id'] ) || $item['product_id'] != $product->id )
-				continue;
+				{$va=null;}
 
+			else{
 			$matched = true;
 			// figure out if all the args match
 			foreach ( $args as $k => $v ) {
 				if ( ! isset( $item[ $k ] ) || $item[ $k ] != $v ) {
 					$matched = false;
-					break;
 				}
 			}
 
@@ -1143,6 +1143,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 				$found_id = $oiid;
 				$found = QSOT_WC3()->is_wc3() ? $raw_item : $item;
 				break;
+			}
 			}
 		}
 

@@ -823,13 +823,11 @@ class QSOT_Post_Type_Event_Area {
 		foreach ( $order->get_items( 'line_item' ) as $oiid => $item ) {
 			$item = QSOT_WC3()->order_item( $item );
 			// if this item is not on the list of edited items, then skip
-			if ( ! in_array( $oiid, $items['order_item_id'] ) )
-				continue;
-
 			// if this order item is not a ticket, then skip
-			if ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) )
+			if (( ! in_array( $oiid, $items['order_item_id'] ) ) || ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) ))
 				continue;
-
+			else
+			{
 			// add the event_id to the list of event_ids to update purchases on
 			$event_ids[ $item['event_id'] ] = 1;
 
@@ -843,11 +841,11 @@ class QSOT_Post_Type_Event_Area {
 			$event_area = apply_filters( 'qsot-event-area-for-event', false, $item['event_id'] );
 
 			// if there is no area_type for this event, then skip this item
-			if ( ! is_object( $event_area ) || ! isset( $event_area->area_type ) )
-				continue;
-
-			// run the update code for this event area on this item
-			$event_area->area_type->save_order_item( $order_id, $oiid, $item, $updates, $event_area );
+			if (  is_object( $event_area ) ||  isset( $event_area->area_type ) )
+				{// run the update code for this event area on this item
+				$event_area->area_type->save_order_item( $order_id, $oiid, $item, $updates, $event_area );
+				}
+			}
 		}
 
 		// update the purchases for each event
@@ -1106,9 +1104,10 @@ class QSOT_Post_Type_Event_Area {
 			// only do this for order items that are tickets
 			if ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) ) {
 				var_dump( 'NOT A TICKET', $item );
-				continue;
 			}
 
+			else
+			{
 			// get the event, area_type and zoner for this item
 			$event = get_post( $item['event_id'] );
 			$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
@@ -1122,15 +1121,17 @@ class QSOT_Post_Type_Event_Area {
 					var_dump( 'NOT EVENT AREA', $event_area );
 				if ( ! is_object( $area_type ) )
 					var_dump( 'NOT AREA TYPE', $area_type );
-				continue;
 			}
+			else
+			{
+				// have the event_area determine how to update the order item info in the ticket table
+				$result = $area_type->confirm_tickets( $item, $item_id, $order, $event, $event_area );
+				var_dump( 'RESULT', $result );
 
-			// have the event_area determine how to update the order item info in the ticket table
-			$result = $area_type->confirm_tickets( $item, $item_id, $order, $event, $event_area );
-			var_dump( 'RESULT', $result );
-
-			// notify externals of the change
-			do_action( 'qsot-confirmed-ticket', $order, $item, $item_id, $result );
+				// notify externals of the change
+				do_action( 'qsot-confirmed-ticket', $order, $item, $item_id, $result );
+			}
+			}
 		}
 	}
 
@@ -1274,16 +1275,17 @@ class QSOT_Post_Type_Event_Area {
 				$item = QSOT_WC3()->order_item( $item );
 				// only do this for order items that are tickets
 				if ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) )
-					continue;
-
+					{$va=null;}
+				else
+				{
 				// get the event, area_type and zoner for this item
 				$event = get_post( $item['event_id'] );
 				$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
 				$area_type = is_object( $event_area ) ? $event_area->area_type : null;
 
 				// if any of the data is missing, the skip this item
-				if ( ! is_object( $event ) || ! is_object( $event_area ) || ! is_object( $area_type ) )
-					continue;
+				if (  is_object( $event ) ||  is_object( $event_area ) ||  is_object( $area_type ) )
+				{
 				$event->event_area = $event_area;
 
 				// have the event_area determine how to update the order item info in the ticket table
@@ -1313,6 +1315,8 @@ class QSOT_Post_Type_Event_Area {
 					apply_filters( 'the_title', $event->post_title . ' @ ' . $event_date_time ),
 					$event->ID
 				), $event, $item ) );
+				}
+				}
 			}
 		}
 	}

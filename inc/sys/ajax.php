@@ -103,16 +103,18 @@ class QSOT_Ajax {
 			foreach ( $handlers as $handler ) {
 				// if this handler is only good for certain actions, then make sure that we are on one of those actions
 				if ( is_array( $handler['only_for'] ) && count( $handler['only_for'] ) && ! in_array( $action, $handler['only_for'] ) )
-					continue;
-
+					{$va=null;}
+				else{
 				// if this action requires an nonce, and the nonce failed, then skip it
 				if ( $handler['requires_nonce'] && ! $nonce_passes )
-					continue;
-
+					{$vr=null;}
+				else{
 				// if the current user has access to this handler, then call it
 				if ( self::_passes_security( $handler['req'] ) ) {
 					$out = call_user_func( $handler['func'], $out, $event );
 					$ran_one = true;
+				}
+				}
 				}
 			}
 		}
@@ -142,8 +144,8 @@ class QSOT_Ajax {
 		// otherwise, test every requirement
 		foreach ( $security as $can_user ) {
 			// if this security requirement is not in the right format, then skip it
-			if ( ! is_array( $can_user ) || ! count( $can_user ) )
-				continue;
+			if (  is_array( $can_user ) ||  count( $can_user ) )
+			{
 			$can_user = array_values( $can_user );
 
 			// get the capability we are supposed to check for on this pass
@@ -161,6 +163,7 @@ class QSOT_Ajax {
 			if ( ! call_user_func_array( 'current_user_can', $args ) ) {
 				$pass = false;
 				break;
+			}
 			}
 		}
 

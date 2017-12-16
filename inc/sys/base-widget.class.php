@@ -251,10 +251,11 @@ abstract class qsot_events_base_widget extends WP_Widget {
 				if (file_exists($dir) && is_dir($dir) && is_readable($dir)) {
 					// foreach file in the currect directory
 					foreach (scandir($dir) as $file) {
-						if ($file{0} == '.') continue; // skip hidden
-						if (is_dir($dir.$file)) continue; // skip sub dirs
-						if (!is_readable($dir.$file)) continue; // skip unreadable
-						if (!preg_match('#^'.preg_quote($this->short_name).'.#', $file)) continue; // skip files that are not templates for this widget
+						// skip hidden, sub dirs,unreadable,files that are not templates for this widget
+						if (($file{0} == '.') || (is_dir($dir.$file)) || (!is_readable($dir.$file)) || (!preg_match('#^'.preg_quote($this->short_name).'.#', $file)))
+						{$chk="skip";}
+						else
+						{
 						$parts = explode('.', $file);
 						$ext = strtolower(trim(array_pop($parts)));
 						if ($ext != 'php') continue; // skip non-php files
@@ -266,6 +267,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 						self::$_templates[$this->short_name] = array_merge(self::$_templates[$this->short_name], array(
 							$label_short => $dir.$this->short_name.'.'.$short.'.'.$ext,
 						));
+						}
 					}
 				}
 			}
