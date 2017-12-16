@@ -226,7 +226,7 @@ class qsot_frontend_calendar {
 
 		$wp_scripts='';
 		if ( ! is_object( $wp_scripts ) )
-			return;
+			return 'fullcalendar';
 		// see if we have a registered script for this language
 		if ( isset( $wp_scripts->registered[ 'fullcalendar-lang-' . $locale ] ) ) {
 			wp_enqueue_script( 'fullcalendar-lang-' . $locale );

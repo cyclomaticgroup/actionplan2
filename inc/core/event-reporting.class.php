@@ -250,7 +250,7 @@ abstract class QSOT_Admin_Report {
 	protected function _results() {
 		// if the report is not supposed to run yet, then bail
 		if ( ! $this->_verify_run_report() )
-			return;
+			return "null";
 
 		// start the csv output file. if that fails, there is no point in continuing
 		if ( ! ( $csv_file = $this->_open_csv_file( '', '', true ) ) )
