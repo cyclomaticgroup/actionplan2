@@ -1,8 +1,8 @@
 <?php if ( __FILE__ == $_SERVER['SCRIPT_FILENAME'] ) header( 'Location: /');
 
 class qsot_admin_settings {
-	private $start_date;
-	private $end_date;
+	//private $start_date;
+	//private $end_date;
 
 	// container for all the reports
 	private $reports = array();
@@ -10,7 +10,7 @@ class qsot_admin_settings {
 	// container for all the request args
 	private $first_tab = null;
 	private $current_tab = null;
-	private $curretn_report = null;
+	private $current_report = null;
 
 	// during page load, we may want to run the printer frinedly version of the report
 	public function on_load() {

@@ -11,7 +11,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	// setup the pages, by loading their classes and assets and such
 	public static function get_settings_pages() {
 		// load the settings pages, if they are not already loaded
-		if ( empty( self::$settings ) ) {
+		if ( empty( static::$settings ) ) {
 			// load the admin page assets from our plugin
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_admin_page_assets' ), 1000 );
 
@@ -36,10 +36,10 @@ class qsot_admin_settings extends WC_Admin_Settings {
 			$settings[] = include 'settings/dates.php';
 
 			// allow adding of other pages if needed
-			self::$settings = array_filter( array_values( apply_filters( 'qsot_get_settings_pages', $settings ) ) );
+			static::$settings = array_filter( array_values( apply_filters( 'qsot_get_settings_pages', $settings ) ) );
 		}
 
-		return self::$settings;
+		return static::$settings;
 	}
 
 	// load the admin page assets, depending on the page we are viewing
