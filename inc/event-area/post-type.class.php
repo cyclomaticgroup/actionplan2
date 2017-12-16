@@ -1144,9 +1144,8 @@ class QSOT_Post_Type_Event_Area {
 		foreach ( $order->get_items() as $item_id => $item ) {
 			$item = QSOT_WC3()->order_item( $item );
 			// only do this for order items that are tickets
-			if ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) )
-				continue;
-
+			if ( apply_filters( 'qsot-item-is-ticket', false, $item ) )
+			{
 			// get the event, area_type and zoner for this item
 			$event = get_post( $item['event_id'] );
 			$event_area = apply_filters( 'qsot-event-area-for-event', false, $event );
@@ -1164,6 +1163,7 @@ class QSOT_Post_Type_Event_Area {
 			// notify externals of the change
 			//do_action( 'qsot-updated-order-id', $order, $item, $item_id, $result );
 			do_action( 'qsot-confirmed-ticket', $order, $item, $item_id, $result_status );
+			}
 		}
 	}
 
