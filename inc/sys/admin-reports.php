@@ -12,7 +12,7 @@ class qsot_admin_settings {
 	private $current_tab = null;
 	private $current_report = null;
 
-	// during page load, we may want to run the printer frinedly version of the report
+	// during page load, we may want to run the printer friendly version of the report
 	public function on_load() {
 		// gather the list of reports, which should be registered by now
 		$this->reports = $this->get_reports();

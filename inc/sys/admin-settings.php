@@ -11,7 +11,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	// setup the pages, by loading their classes and assets and such
 	public static function get_settings_pages() {
 		// load the settings pages, if they are not already loaded
-		if ( empty( qsot_admin_settings::$settings ) ) {
+		if ( empty( static::$settings ) ) {
 			// load the admin page assets from our plugin
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_admin_page_assets' ), 1000 );
 
@@ -24,29 +24,29 @@ class qsot_admin_settings extends WC_Admin_Settings {
 			// handle qtranslate LSB fields
 			add_action( 'woocommerce_admin_field_qtranslate-lsb', array( __CLASS__, 'field_lsb' ) );
 
-			//$settings = array();
+			$settings = array();
 
 			// load the woocoomerce settings api
 			include_once WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php';
 			include_once QSOT::plugin_dir() . 'inc/sys/settings-page.abstract.php';
 
 			// load the various settings pages
-            qsot_admin_settings::$settings[] = include 'settings/general.php';
-            qsot_admin_settings::$settings[] = include 'settings/frontend.php';
-            qsot_admin_settings::$settings[] = include 'settings/dates.php';
+            $settings[] = include 'settings/general.php';
+            $settings[] = include 'settings/frontend.php';
+            $settings[] = include 'settings/dates.php';
 
 			// allow adding of other pages if needed
-            qsot_admin_settings::$settings = array_filter( array_values( apply_filters( 'qsot_get_settings_pages', qsot_admin_settings::$settings ) ) );
+            static::$settings = array_filter( array_values( apply_filters( 'qsot_get_settings_pages', $settings ) ) );
 		}
 
-		return qsot_admin_settings::$settings;
+		return static::$settings;
 	}
 
 	// load the admin page assets, depending on the page we are viewing
 	public static function load_admin_page_assets( $hook ) {
 		// if the current page is the settings page, then load our settings js
-        qsot_admin_settings::$settings = apply_filters( 'qsot-get-menu-page-uri', array(), 'settings' );
-		if ( isset( qsot_admin_settings::$settings[1] ) && $hook == qsot_admin_settings::$settings[1] ) {
+        static::$settings = apply_filters( 'qsot-get-menu-page-uri', array(), 'settings' );
+		if ( isset( static::$settings[1] ) && $hook == static::$settings[1] ) {
 			wp_enqueue_media();
 			wp_enqueue_script( 'qsot-admin-settings' );
 			wp_enqueue_style( 'qsot-admin-settings' );
@@ -129,7 +129,7 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	 * @param string $text
 	 */
 	public static function add_message( $text ) {
-        qsot_admin_settings::$messages[] = $text;
+        static::$messages[] = $text;
 	}
 
 	/**
@@ -137,20 +137,20 @@ class qsot_admin_settings extends WC_Admin_Settings {
 	 * @param string $text
 	 */
 	public static function add_error( $text ) {
-        qsot_admin_settings::$errors[] = $text;
+        static::$errors[] = $text;
 	}
 
 	/**
 	 * Output messages + errors
 	 */
 	public static function show_messages() {
-		if ( sizeof( qsot_admin_settings::$errors ) > 0 ) {
-			foreach ( qsot_admin_settings::$errors as $error )
+		if ( sizeof( static::$errors ) > 0 ) {
+			foreach ( static::$errors as $error )
 				?>
 				<div id="message" class="error fade"><p><strong><?php echo esc_html( $error ) ?></strong></p></div>
 <?php
-		} elseif ( sizeof( qsot_admin_settings::$messages ) > 0 ) {
-			foreach ( qsot_admin_settings::$messages as $message )
+		} elseif ( sizeof( static::$messages ) > 0 ) {
+			foreach ( static::$messages as $message )
 ?>
 				<div id="message" class="updated fade"><p><strong><?php esc_html( $message ) ?></strong></p></div>
 <?php
