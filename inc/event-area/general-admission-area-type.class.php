@@ -19,7 +19,7 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 	public function __construct() {
 		// if there is already an instance of this object, then bail now
 		if ( isset( self::$instance ) && self::$instance instanceof QSOT_General_Admission_Area_Type )
-			throw new Exception( sprintf( __( 'There can only be one instance of the %s object at a time.', 'opentickets-community-edition' ), __CLASS__ ), 12000 );
+			throw new ManyInstanceException( sprintf( __( 'There can only be one instance of the %s object at a time.', 'opentickets-community-edition' ), __CLASS__ ), 12000 );
 
 		// otherwise, set this as the known instance
 		self::$instance = $this;

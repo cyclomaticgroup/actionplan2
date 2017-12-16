@@ -19,7 +19,7 @@ class QSOT_Post_Type_Event_Area {
 	public function __construct() {
 		// if there is already an instance of this object, then bail now
 		if ( isset( self::$instance ) && self::$instance instanceof QSOT_Post_Type_Event_Area )
-			throw new Exception( sprintf( __( 'There can only be one instance of the %s object at a time.', 'opentickets-community-edition' ), __CLASS__ ), 12000 );
+			throw new ManyInstanceException( sprintf( __( 'There can only be one instance of the %s object at a time.', 'opentickets-community-edition' ), __CLASS__ ), 12000 );
 
 		// otherwise, set this as the known instance
 		self::$instance = $this;
@@ -558,7 +558,7 @@ class QSOT_Post_Type_Event_Area {
 	public function register_event_area_type( &$type_object ) {
 		// make sure that the submitted type uses the base class
 		if ( ! ( $type_object instanceof QSOT_Base_Event_Area_Type ) )
-			throw new Exception( __( 'The supplied event type does not use the QSOT_Base_Event_Type parent class.', 'opentickets-community-edition' ), 12100 );
+			throw new InvalidEventTypeException( __( 'The supplied event type does not use the QSOT_Base_Event_Type parent class.', 'opentickets-community-edition' ), 12100 );
 
 		// figure out the slug and display name of the submitted event type
 		$slug = $type_object->get_slug();

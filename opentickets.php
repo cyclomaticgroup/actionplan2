@@ -262,10 +262,15 @@ class QSOT {
 			$res = $woocommerce->session->get_customer_id();
 
 		// if we still dont have an id, then make some shit up
-		if ( empty( $res ) )
-			$res = self::cryptoProtect(( isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : time() ) . ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : rand( 0, PHP_INT_MAX ) ));
-
-		return $res;
+		if ( empty( $res ) ) {
+            $alg = 'sha256';
+            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
+            $hex_key = file_get_contents($secret_key);
+            $key = pack('H*', $hex_key);
+            $string = (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : time()) . (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : rand(0, PHP_INT_MAX));
+            $res =  hash_hmac($alg, $string, $key);
+        }
+        return $res;
 	}
 
 	// get the max packet size from mysql, if we can
@@ -708,11 +713,11 @@ class QSOT {
 		// if we ar not in debug mode
 		if ( ! WP_DEBUG ) {
 			if ( ! file_exists( $file ) || ! is_readable( $file ) || is_dir( $file ) )
-				throw new Exception( sprintf( __( 'Could not find the needed library %s, for use in %s.', 'opentickets-community-edition' ), $lib_name, $context ) );
+				throw new LibraryNotFoundException( sprintf( __( 'Could not find the needed library %s, for use in %s.', 'opentickets-community-edition' ), $lib_name, $context ) );
 		// if we ARE in debug mode
 		} else {
 			if ( ! file_exists( $file ) || ! is_readable( $file ) || is_dir( $file ) )
-				throw new Exception( sprintf( __( 'Could not find the needed library %s, for use in %s.', 'opentickets-community-edition' ), $lib_name, $context ) );
+				throw new LibraryNotFoundException( sprintf( __( 'Could not find the needed library %s, for use in %s.', 'opentickets-community-edition' ), $lib_name, $context ) );
 		}
 
 		return true;
@@ -786,21 +791,6 @@ class QSOT {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
 			file_put_contents( 'compile.log', $out );
 	}
-
-    private static function cryptoProtect($string, $isPws=false)
-    {
-        if($isPws) {
-            $cost = 13;
-            return password_hash($string, PASSWORD_BCRYPT, ['cost' => $cost]);
-        }
-        else {
-            $alg = 'sha256';
-            $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
-            $hex_key = file_get_contents($secret_key);
-            $key = pack('H*', $hex_key);
-            return hash_hmac($alg, $string, $key);
-        }
-    }
 }
 
 // dummy noop function. literally does nothing (meant for actions and filters)
@@ -862,7 +852,7 @@ if ( ! function_exists( 'qsot_overload_core_class' ) ) {
 			eval( stream_get_contents( $f ) );
 			fclose( $f );
 			unset( $content );
-		} else throw new Exception( 'Could not find overload file [ ' . $path . ' ].' );
+		} else throw new FileNotFoundException( 'Could not find overload file [ ' . $path . ' ].' );
 	}
 
 	class QSOT_overload_filter extends php_user_filter {
