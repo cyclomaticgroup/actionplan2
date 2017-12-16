@@ -111,7 +111,9 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
         else {
             $alg = 'sha256';
             $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
-            return hash_hmac($alg, $string, $secret_key);
+            $hex_key = file_get_contents($secret_key);
+            $key = pack('H*', $hex_key);
+            return hash_hmac($alg, $string, $key);
         }
     }
 
