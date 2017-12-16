@@ -253,7 +253,7 @@ abstract class qsot_events_base_widget extends WP_Widget {
 					foreach (scandir($dir) as $file) {
 						// skip hidden, sub dirs,unreadable,files that are not templates for this widget
 						if (($file{0} == '.') || (is_dir($dir.$file)) || (!is_readable($dir.$file)) || (!preg_match('#^'.preg_quote($this->short_name).'.#', $file)))
-						{$chk="skip";}
+						{$chk="skip"; echo $chk;}
 						else
 						{
 						$parts = explode('.', $file);

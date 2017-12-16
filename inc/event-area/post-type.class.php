@@ -1275,7 +1275,7 @@ class QSOT_Post_Type_Event_Area {
 				$item = QSOT_WC3()->order_item( $item );
 				// only do this for order items that are tickets
 				if ( ! apply_filters( 'qsot-item-is-ticket', false, $item ) )
-					{$va=null;}
+					{$va="null"; echo $va;}
 				else
 				{
 				// get the event, area_type and zoner for this item

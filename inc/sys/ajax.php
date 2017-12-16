@@ -103,11 +103,11 @@ class QSOT_Ajax {
 			foreach ( $handlers as $handler ) {
 				// if this handler is only good for certain actions, then make sure that we are on one of those actions
 				if ( is_array( $handler['only_for'] ) && count( $handler['only_for'] ) && ! in_array( $action, $handler['only_for'] ) )
-					{$va=null;}
+					{$va="null"; echo $va;}
 				else{
 				// if this action requires an nonce, and the nonce failed, then skip it
 				if ( $handler['requires_nonce'] && ! $nonce_passes )
-					{$vr=null;}
+					{$vr="null"; echo $vr;}
 				else{
 				// if the current user has access to this handler, then call it
 				if ( self::_passes_security( $handler['req'] ) ) {
