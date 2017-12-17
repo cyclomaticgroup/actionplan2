@@ -509,16 +509,8 @@ function csrfguard_start()
 
 	// take the resulting group of row datas, and create entries in the csv for them
 	protected function _csv_render_rows( $group, $csv_file ) {
-	session_start(); //if you are copying this code, this line makes it work.
-csrfguard_start();
-
-
-
-
-
-
-
-
+		session_start(); //if you are copying this code, this line makes it work.
+		csrfguard_start();
 		// if the csv file descriptor has gone away, then bail (could happen because of filters)
 		if ( ! is_array( $csv_file ) || ! isset( $csv_file['fd'] ) || ! is_resource( $csv_file['fd'] ) )
 			return;
@@ -588,6 +580,8 @@ csrfguard_start();
 
 	// add the header row to the csv
 	protected function _csv_header_row( $file ) {
+		session_start(); //if you are copying this code, this line makes it work.
+		csrfguard_start();
 		$columns = $this->csv_report_columns();
 		fputcsv( $file['fd'], array_values( $columns ) );
 	}
