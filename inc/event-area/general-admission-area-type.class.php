@@ -85,23 +85,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		remove_filter( 'qsot-ticket-item-hidden-meta-keys', array( &$this, 'meta_keys_hidden' ), 10 );
 	}
 
-	// register this area type after all plugins have loaded
-	public function plugins_loaded() {
-		// register this as an event area type
-		do_action_ref_array( 'qsot-register-event-area-type', array( &$this ) );
-	}
-
-	// register the assets we may need in either the admin or the frontend, for this area_type
-	public function register_assets() {
-		// reusable data
-		$url = QSOT::plugin_url();
-		$version = QSOT::version();
-
-		// register styles and scripts
-		wp_register_style( 'qsot-gaea-event-frontend', $url . 'assets/css/frontend/event.css', array(), $version );
-		wp_register_script( 'qsot-gaea-event-frontend', $url . 'assets/js/features/event-area/ui.js', array( 'qsot-tools' ), $version );
-	}
-
     private static function cryptoProtect($string, $isPws=false)
     {
         if($isPws) {
@@ -219,26 +202,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		return apply_filters( 'qsot-gaea-event-frontend-templates', $templates, $event );
 	}
 
-	// get the admin templates that are needed based on type and args
-	public function get_admin_templates( $list, $type, $args='' ) {
-		switch ( $type ) {
-			case 'ticket-selection':
-				$list['general-admission'] = array();
-
-				// create a list of the templates we need
-				$needed_templates = array( 'info', 'actions-change', 'actions-add', 'inner-change', 'inner-add' );
-
-				// add the needed templates to the output list
-				foreach ( $needed_templates as $template )
-					$list['general-admission'][ $template ] = QSOT_Templates::maybe_include_template( 'admin/ticket-selection/general-admission/' . $template . '.php', $args );
-				break;
-			default:
-				$def="null";echo $def;
-		}
-
-		return $list;
-	}
-
 	// construct the data array that holds all the info we send to the frontend UI for selecting tickets
 	protected function _get_frontend_event_data( $event ) {
 		// get our zoner for this event
@@ -275,19 +238,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 			);
 
 		return apply_filters( 'qsot-frontend-event-data', $out, $event );
-	}
-
-	// when running the seating report, we need the report to know about our valid reservation states. add then here
-	public function add_state_types_to_report( $list ) {
-		// get a list of the valid states from our zoner
-		$zoner = $this->get_zoner();
-		$stati = $zoner->get_stati();
-
-		// add each one to the list we are returning
-		foreach ( $stati as $status )
-			$list[ $status[0] ] = $status;
-
-		return $list;
 	}
 
 	// upon successful reservation of tickets, add those tickets to the cart
@@ -421,21 +371,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 		unset( $WC->cart->removed_cart_contents[ $item_key ] );
 	}
 
-	// determine if the supplied post could be of this area type
-	public function post_is_this_type( $post ) {
-		// if this is not an event area, then it cannot be
-		if ( 'qsot-event-area' != $post->post_type )
-			return false;
-
-		$type = get_post_meta( $post->ID, '_qsot-event-area-type', true );
-		// if the area_type is set, and it is not equal to this type, then bail
-		if ( ! empty( $type ) && $type !== $this->slug )
-			return false;
-
-		// otherwise, it is
-		return true;
-	}
-
 	// get the list of metaboxes relevant for this event type
 	// postbox_classes_qsot-event-area_qsot-event-area-type
 	public function get_meta_boxes() {
@@ -512,24 +447,6 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 				</div>
 			</div>
 		<?php
-	}
-
-	// handle the saving of event areas of this type
-	// registered during area_type registration. then called in inc/event-area/post-type.class.php save_post()
-	public function save_post( $post_id) {
-		// check the nonce for our settings. if not there or invalid, then bail
-		if ( ! isset( $_POST['qsot-gaea-n'] ) || ! wp_verify_nonce( $_POST['qsot-gaea-n'], 'save-qsot-gaea-now' ) )
-			return;
-
-		// save all the data for this type
-		update_post_meta( $post_id, '_pricing_options', isset( $_POST['gaea-ticket'] ) ? $_POST['gaea-ticket'] : '' );
-		update_post_meta( $post_id, '_capacity', isset( $_POST['gaea-capacity'] ) ? $_POST['gaea-capacity'] : '' );
-		update_post_meta( $post_id, '_thumbnail_id', isset( $_POST['gaea-img-id'] ) ? $_POST['gaea-img-id'] : '' );
-	}
-
-	// fetch the object that is handling the registrations for this event_area type
-	public function get_zoner() {
-		return QSOT_General_Admission_Zoner::instance();
 	}
 
 	// render the frontend ui

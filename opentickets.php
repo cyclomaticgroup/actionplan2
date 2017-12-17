@@ -87,26 +87,27 @@ class QSOT {
 			self::_check_used_since();
 	}
 
-	public static function me() { return self::$me; }
-	public static function version() { return self::$version; }
-	public static function plugin_dir() { return self::$plugin_dir; }
-	public static function plugin_url() { return self::$plugin_url; }
-	public static function product_url() { return self::$product_url; }
+	public static function infoPlugin()
+    {
+	    return [
+            'me' => self::$me,
+            'version' => self::$version,
+            'plugin_dir' => self::$plugin_dir,
+            'plugin_url' => self::$plugin_url,
+            'product_url' => self::$product_url
+        ];
+    }
 
-	public static function is_wc_latest() {
-		static $answer = null;
-		return $answer !== null ? $answer : ($answer = version_compare(self::$wc_latest, WC()->version) <= 0);
-	}
-
-	public static function is_wc_back_one() {
-		static $answer = null;
-		return $answer !== null ? $answer : ($answer = version_compare(self::$wc_back_one, WC()->version) <= 0);
-	}
-
-	public static function is_wc_at_least( $version ) {
-		static $answers = array();
-		return ( isset( $answers[ $version ] ) ) ? $answers[ $version ] : ( $answers[ $version ] = version_compare( $version, WC()->version ) <= 0 );
-	}
+	public static function is_wc($version=null)
+    {
+        static $answer = null;
+        static $answers = array();
+	    return [
+            'latest' => $answer !== null ? $answer : ($answer = version_compare(self::$wc_latest, WC()->version) <= 0),
+	        'back_one' => $answer !== null ? $answer : ($answer = version_compare(self::$wc_back_one, WC()->version) <= 0),
+            'at_least' => (isset( $answers[ $version ] ) ) ? $answers[ $version ] : ( $answers[ $version ] = version_compare( $version, WC()->version ) <= 0 )
+        ];
+    }
 
 	public static function admin_deactivate() {
 		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) return;
@@ -154,13 +155,12 @@ class QSOT {
 		do_action('qsot-after-loading-modules-and-plugins');
 	}
 
-	public static function register_base_admin_assets() {
-		wp_register_style('qsot-base-admin', self::$o->core_url.'assets/css/admin/base.css', array(), self::$o->version);
-	}
-
-	public static function load_base_admin_assets() {
-		wp_enqueue_style('qsot-base-admin');
-	}
+	public static function register_load($reg = false)
+    {
+        if ($reg)
+            wp_register_style('qsot-base-admin', self::$o->core_url.'assets/css/admin/base.css', array(), self::$o->version);
+        wp_enqueue_style('qsot-base-admin');
+    }
 
 	// when on the edit single event page in the admin, we need to queue up certain aseets (previously registered) so that the page actually works properly
 	public static function load_assets() {
@@ -223,20 +223,6 @@ class QSOT {
 		$requirements = array( 'qsot-core-tools' );
 		if ( is_admin() ) $requirements[] = 'qsot-admin-tools';
 		wp_register_script( 'qsot-tools', false, $requirements, self::$o->version );
-	}
-
-	public static function prepend_overtake_autoloader() {
-		spl_autoload_register(array(__CLASS__, 'special_autoloader'), true, true);
-	}
-
-	public static function why_do_i_have_to_do_this() {
-		/// retarded loading work around for the emails core template ONLY in ajax mode, for sending core emails from ajax mode...... wtf
-		if (defined('DOING_AJAX') && DOING_AJAX && isset($_POST['action']) && $_POST['action'] == 'woocommerce_remove_order_item' && class_exists('WC_Emails')) new WC_Emails();
-	}
-
-	public static function load_custom_emails($list) {
-		do_action('qsot-load-includes', '', '#^.+\.email\.php$#i');
-		return $list;
 	}
 
 	// current_user is the id we use to lookup tickets in relation to a product in a cart. once we have an order number this pretty much becomes obsolete, but is needed up til that moment
@@ -374,36 +360,6 @@ class QSOT {
 		return $template;
 	}
 
-	public static function only_search_parent_events($query) {
-		if ( isset( $query['post_type'] ) ) {
-			if ( ! isset( $query['post_type'] ) && (
-				( is_array( $query['post_type'] ) && in_array( self::$o->core_post_type, $query['post_type'] ) ) ||
-				( is_scalar( $query['post_type'] ) && $query['post_type'] == self::$o->core_post_type )
-			) ) {
-				$query['post_parent'] = 0;
-			}
-		}
-		return $query;
-	}
-
-	// get a list of OTCE core pages
-	public static function core_screen_ids() {
-		return array(
-			'edit-qsot-event', // admin event list page
-			'qsot-event', // individual admin edit event page
-			'edit-qsot-venue', // admin venue list page
-			'qsot-venue', // individual admin edit venue page
-			'edit-qsot-event-area', // admin even area list page 'seating extension'
-			'qsot-event-area', // individual admin edit event-area page
-			'toplevel_page_opentickets', // opentickets toplevel page (reports currently)
-			'opentickets_page_opentickets-settings', // opentickets settings page
-			'opentickets_page_qsot-system-status', // opentickets system status page
-			'opentickets_page_qsot-extensions', // opentickets extensions page
-			'updates-core', // the WP updater page. yeah shameless i know
-			'plugins', // the WP plugins page. yeah shameless i know
-		);
-	}
-
 	// add a promo to the admin footer, which asks for a rating on wp.org
 	public static function admin_footer_text( $text ) {
 		// figure out the current page we are on
@@ -413,7 +369,20 @@ class QSOT {
 		// determine if we should be: doing nothing to, adding to, or replacing the footer text based on the page
 		if ( isset( $current_screen->id ) ) {
 			// copmletely replace the footer on OpenTickets pages
-			if ( in_array( $current_screen->id, self::core_screen_ids() ) )
+			if ( in_array( $current_screen->id, [
+                'edit-qsot-event', // admin event list page
+                'qsot-event', // individual admin edit event page
+                'edit-qsot-venue', // admin venue list page
+                'qsot-venue', // individual admin edit venue page
+                'edit-qsot-event-area', // admin even area list page 'seating extension'
+                'qsot-event-area', // individual admin edit event-area page
+                'toplevel_page_opentickets', // opentickets toplevel page (reports currently)
+                'opentickets_page_opentickets-settings', // opentickets settings page
+                'opentickets_page_qsot-system-status', // opentickets system status page
+                'opentickets_page_qsot-extensions', // opentickets extensions page
+                'updates-core', // the WP updater page. yeah shameless i know
+                'plugins', // the WP plugins page. yeah shameless i know
+            ] ) )
 				$action = 'replace';
 			// add to the footer if on a WooCommerce page
 			else if ( in_array( $current_screen->id, wc_get_screen_ids() ) )
@@ -452,17 +421,6 @@ class QSOT {
 		return $text;
 	}
 
-	public static function loadtextdomain() {
-		$domain = 'opentickets-community-edition';
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-
-		// first load any custom language file defined in the site languages path
-		load_textdomain( $domain, WP_LANG_DIR . '/plugins/' . $domain . '/custom-' . $domain . '-' . $locale . '.mo' );
-
-		// load the translation after all plugins have been loaded. fixes the multilingual issues
-		load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/langs/' );
-	}
-
 	// load all *.class.php files in the inc/ dir, and any other includes dirs that are specified by external plugins (which may or may not be useful, since external plugins
 	// should do their own loading of their own files, and not defer that to us), filtered by subdir $group. so if we want to load all *.class.php files in the inc/core/ dir
 	// then $group should equal 'core'. equally, if we want to load all *.class.php files in the inc/core/super-special/top-secret/ dir then the $group variable should be
@@ -495,29 +453,6 @@ class QSOT {
 			}
 		}
 		unset($dirs, $iter);
-	}
-
-	public static function memory_limit_problem() {
-		if (empty(self::$memory_error)) return;
-
-		$msg = str_replace(
-			array(
-				'%%PRODUCT%%',
-			),
-			array(
-				sprintf('<em><a href="%s" target="_blank">%s</a></em>', esc_attr(self::$o->product_url), force_balance_tags(self::$o->product_name)),
-			),
-			self::$memory_error
-		);
-
-		?>
-			<div class="error errors">
-				<p class="error">
-					<u><strong><?php _e('Memory Requirement Problem','opentickets-community-edition') ?></strong></u><br/>
-					<?php echo $msg ?>
-				</p>
-			</div>
-		<?php
 	}
 
 	// minimum mmeory required is 48MB
@@ -561,90 +496,6 @@ class QSOT {
 		if (!empty(self::$memory_error)) add_action('admin_notices', array(__CLASS__, 'memory_limit_problem'), 100);
 
 		return $allow;
-	}
-
-	// get the current number of milliseconds during execution. used for 'since' in the reservation table, mostly
-	public static function mille() {
-		// get the current microtime
-		$when = explode( '.', microtime( true ) );
-		return (int)end( $when );
-	}
-
-	public static function memory_limit($force=false) {
-		static $max = false;
-
-		if ($force || $max === false) {
-			$max = self::xb2b( ini_get('memory_limit'), true );
-		}
-
-		return $max;
-	}
-
-	public static function xb2b( $raw, $fakeit = false ) {
-		$out = '';
-		$raw = strtolower( $raw );
-		preg_match_all( '#^(\d+)(\w*)?$#', $raw, $matches, PREG_SET_ORDER );
-		if ( isset( $matches[0] ) ) {
-			$out = $matches[0][1];
-			$unit = $matches[0][2];
-			switch ( $unit ) {
-				case 'k': $out *= 1024; break;
-				case 'm': $out *= 1048576; break;
-				case 'g': $out *= 1073741824; break;
-				default: $def="null";echo $def;
-			}
-		} else {
-			$out = $fakeit ? 32 * 1048576 : $raw;
-		}
-
-		return $out;
-	}
-
-	// get the color defaults
-	public static function default_colors() {
-		return array(
-			// ticket selection ui
-			'form_bg' => '#f4f4f4',
-			'form_border' => '#888888',
-			'form_action_bg' => '#888888',
-			'form_helper' => '#757575',
-
-			'good_msg_bg' => '#eeffee',
-			'good_msg_border' => '#008800',
-			'good_msg_text' => '#008800',
-
-			'bad_msg_bg' => '#ffeeee',
-			'bad_msg_border' => '#880000',
-			'bad_msg_text' => '#880000',
-
-			'remove_bg' => '#880000',
-			'remove_border' => '#660000',
-			'remove_text' => '#ffffff',
-
-			// calendar defaults
-			'calendar_item_bg' => '#f0f0f0',
-			'calendar_item_border' => '#577483',
-			'calendar_item_text' => '#577483',
-			'calendar_item_bg_hover' => '#577483',
-			'calendar_item_border_hover' => '#577483',
-			'calendar_item_text_hover' => '#ffffff',
-
-			'past_calendar_item_bg' => '#ffffff',
-			'past_calendar_item_border' => '#bbbbbb',
-			'past_calendar_item_text' => '#bbbbbb',
-			'past_calendar_item_bg_hover' => '#ffffff',
-			'past_calendar_item_border_hover' => '#bbbbbb',
-			'past_calendar_item_text_hover' => '#bbbbbb',
-		);
-	}
-
-	// fetch and compile the current settings for the frontend colors. make sure to apply known defaults
-	public static function current_colors() {
-		$options = qsot_options::instance();
-		$colors = $options->{'qsot-event-frontend-colors'};
-		$defaults = self::default_colors();
-
-		return wp_parse_args( $colors, $defaults );
 	}
 
 	public static function compile_frontend_styles() {
@@ -756,129 +607,6 @@ class QSOT {
 
 		// run the activation sequence
 		self::activation();
-	}
-
-	// on admin load, check if we need to update all the event timestamps now. if so, do it
-	public static function maybe_update_event_timestamps() {
-		return;
-		/* NO LONGER DO THIS ON UPDATE. CAN MUNGE DATA
-		// find out the last time the timestamp updater ran
-		$last_run = explode( '|', get_option( '_last_run_otce_normalize_event_times', '' ) );
-
-		$run_now = false;
-		// if the last run is empty, has not been run for this version, or was run for an older version, then run it again
-		if ( ! $last_run )
-			$run_now = true;
-		if ( ! isset( $last_run[1] ) || version_compare( $last_run[1], QSOT_Utils::$normalize_version ) < 0 )
-			$run_now = true;
-
-		// if it never ran, do it now
-		if ( $run_now )
-			QSOT_Utils::normalize_event_times();
-		*/
-	}
-
-	function store_in_session($key,$value)
-{
-	if (isset($_SESSION))
-	{
-		$_SESSION[$key]=$value;
-	}
-}
-function unset_session($key)
-{
-	$_SESSION[$key]=' ';
-	unset($_SESSION[$key]);
-}
-function get_from_session($key)
-{
-	if (isset($_SESSION[$key]))
-	{
-		return $_SESSION[$key];
-	}
-	else {  return false; }
-}
-function csrfguard_generate_token($unique_form_name)
-{
-	$token = random_bytes(64); // PHP 7, or via paragonie/random_compat
-	store_in_session($unique_form_name,$token);
-	return $token;
-}
-function csrfguard_validate_token($unique_form_name,$token_value)
-{
-	$token = get_from_session($unique_form_name);
-	if (!is_string($token_value)) {
-return false;
-
-	}
-	$result = hash_equals($token, $token_value);
-	unset_session($unique_form_name);
-	return $result;
-}
-function csrfguard_replace_forms($form_data_html)
-{
-	$count=preg_match_all("/<form(.*?)>(.*?)<\\/form>/is",$form_data_html,$matches,PREG_SET_ORDER);
-		echo $count;
-
-	if (is_array($matches))
-	{
-		foreach ($matches as $m)
-		{
-			if (strpos($m[1],"nocsrf")!==false) { continue; }
-			$name="CSRFGuard_".mt_rand(0,mt_getrandmax());
-			$token=csrfguard_generate_token($name);
-			$form_data_html=str_replace($m[0],
-				"<form{$m[1]}>
-<input type='hidden' name='CSRFName' value='{$name}' />
-<input type='hidden' name='CSRFToken' value='{$token}' />{$m[2]}</form>",$form_data_html);
-		}
-	}
-	return $form_data_html;
-}
-function csrfguard_inject()
-{
-	$data=ob_get_clean();
-	$data=csrfguard_replace_forms($data);
-	echo $data;
-}
-function csrfguard_start()
-{
-	if (count($_POST))
-	{
-		if ( !isset($_POST['CSRFName']) or !isset($_POST['CSRFToken']) )
-		{
-			trigger_error("No CSRFName found, probable invalid request.",E_USER_ERROR);		
-		} 
-		$name =$_POST['CSRFName'];
-		$token=$_POST['CSRFToken'];
-		if (!csrfguard_validate_token($name, $token))
-		{ 
-			throw new Exception("Invalid CSRF token.");
-		}
-	}
-	ob_start();
-	/* adding double quotes for "csrfguard_inject" to prevent: 
-          Notice: Use of undefined constant csrfguard_inject - assumed 'csrfguard_inject' */
-	register_shutdown_function("csrfguard_inject");	
-}
-
-	// do magic 
-	public static function activation() {
-		session_start(); //if you are copying this code, this line makes it work.
-		csrfguard_start();
-		self::load_plugins_and_modules();
-
-		OpenTickets_Community_Launcher::otce_2_0_0_compatibility_check();
-
-		do_action('qsot-activate');
-		flush_rewrite_rules();
-
-		ob_start();
-		self::compile_frontend_styles();
-		$out = ob_get_contents();
-		ob_end_clean();
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
-			file_put_contents( 'compile.log', $out );
 	}
 }
 

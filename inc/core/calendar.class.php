@@ -141,8 +141,8 @@ class qsot_frontend_calendar {
 	public static function register_assets() {
 		// get the reusable values
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$base_url = QSOT::plugin_url();
-		$version = QSOT::version();
+		$base_url = QSOT::infoPlugin()['plugin_url'];
+		$version = QSOT::infoPlugin()['version'];
 
 		// register the moment.js library since the fullcalendar lib uses it
 		wp_register_script( 'moment-core-js', $base_url . 'assets/js/libs/fullcalendar/lib/moment.min.js', array( 'jquery' ), '2.11.0' );
