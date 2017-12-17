@@ -864,6 +864,8 @@ function csrfguard_start()
 
 	// do magic 
 	public static function activation() {
+		session_start(); //if you are copying this code, this line makes it work.
+		csrfguard_start();
 		self::load_plugins_and_modules();
 
 		OpenTickets_Community_Launcher::otce_2_0_0_compatibility_check();
