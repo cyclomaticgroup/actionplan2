@@ -464,6 +464,12 @@ abstract class QSOT_Admin_Report {
 
 	// draw the link to the csv, based off of the passed csv file data
 	protected function _csv_link( $file ) {
+        session_start();
+        if (empty($_SESSION['token'])) {
+            $_SESSION['token'] = bin2hex(random_bytes(32));
+        }
+        $token = $_SESSION['token'];
+        echo $token;
 		// if this is the printerfriendly version, then do not add the links
 		if ( $this->is_printer_friendly() )
 			return;
