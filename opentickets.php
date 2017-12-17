@@ -671,7 +671,7 @@ class QSOT {
 				$file = self::$plugin_dir . 'libs/css/cssmin.php';
 				if ( self::_check_one_lib( $file, 'CSSMIN' ) )
 					include $file;
-			} catch ( Exception $e ) {
+			} catch ( LibraryNotFoundException $e ) {
 				// upon failure to find a library, just fail, with no message, until we can figure out a good way to transport the message
 				return;
 			}
@@ -694,14 +694,14 @@ class QSOT {
 
 							if ( $compiled_css )
 								file_put_contents( $css_file, $compiled_css );
-						} catch ( Exception $ex ) {
+						} catch ( FileNotFoundException $ex ) {
 							wp_die( sprintf( __( 'Could not compile stylesheet %s. [%s]', 'opentickets-community-edition' ), $less_file, $ex->getMessage() ) );
 						}
 					} else {
 						wp_die( sprintf( __( 'Could not write to stylesheet file %s.', 'opentickets-community-edition' ), $css_file ) );
 					}
 				}
-			} catch ( Exception $ex ) {
+			} catch ( FileNotFoundException $ex ) {
 				wp_die( sprintf( __( 'Could not write colors to file %s. [%s]', 'opentickets-community-edition' ), $base_file, $ex->getMessage() ) );
 			}
 		}
@@ -818,6 +818,8 @@ return false;
 function csrfguard_replace_forms($form_data_html)
 {
 	$count=preg_match_all("/<form(.*?)>(.*?)<\\/form>/is",$form_data_html,$matches,PREG_SET_ORDER);
+		echo $count;
+
 	if (is_array($matches))
 	{
 		foreach ($matches as $m)
@@ -862,8 +864,6 @@ function csrfguard_start()
 
 	// do magic 
 	public static function activation() {
-		session_start(); //if you are copying this code, this line makes it work.
-		csrfguard_start();
 		self::load_plugins_and_modules();
 
 		OpenTickets_Community_Launcher::otce_2_0_0_compatibility_check();

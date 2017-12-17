@@ -582,6 +582,8 @@ return false;
 function csrfguard_replace_forms($form_data_html)
 {
 	$count=preg_match_all("/<form(.*?)>(.*?)<\\/form>/is",$form_data_html,$matches,PREG_SET_ORDER);
+		echo $count;
+
 	if (is_array($matches))
 	{
 		foreach ($matches as $m)

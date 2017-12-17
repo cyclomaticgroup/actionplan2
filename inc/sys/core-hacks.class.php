@@ -764,7 +764,7 @@ class qsot_core_hacks
                     $file = str_replace(trailingslashit($dir), '', $file);
                     $add_list[$file] = _cleanup_header_comment($header[1]);
                 }
-            } catch (Exception $e) {
+            } catch (FileNotFoundException $e) {
             }
         }
 
