@@ -336,7 +336,9 @@ class QSOT_Post_Type_Event_Area {
 					$name = sprintf( __( '[%s]', 'opentickets-community-edition' ), $name );
 
 				echo force_balance_tags( $name );
-			break;
+				break;
+			default:
+				$def="null";echo $def;
 		}
 	}
 

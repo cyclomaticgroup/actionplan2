@@ -116,6 +116,7 @@ class QSOT_New_Seating_Report extends QSOT_Admin_Report {
 			case 'qsotc-seating-report-compile-rows-occupied': $replacement = 'filter:' . 'qsot-' . $this->slug . '-report-data-row'; break;
 			case 'qsot-seating-report-compile-rows-available':
 			case 'qsotc-seating-report-compile-rows-available': $replacement = 'filter:' . 'qsot-' . $this->slug . '-report-before-html-footer'; break;
+			default: $def="null";echo $def;
 		}
 
 		// pop the error

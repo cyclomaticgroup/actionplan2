@@ -513,7 +513,9 @@ class qsot_post_type {
 			case 'child-event-count':
 				$total = (int)$wpdb->get_var($wpdb->prepare('select count(id) from '.$wpdb->posts.' where post_parent = %d and post_type = %s', $post_id, self::$o->core_post_type));
 				echo $total;
-			break;
+				break;
+			default:
+				$def="null";echo $def;
 		}
 	}
 

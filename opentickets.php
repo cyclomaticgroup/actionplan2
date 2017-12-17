@@ -591,6 +591,7 @@ class QSOT {
 				case 'k': $out *= 1024; break;
 				case 'm': $out *= 1048576; break;
 				case 'g': $out *= 1073741824; break;
+				default: $def="null";echo $def;
 			}
 		} else {
 			$out = $fakeit ? 32 * 1048576 : $raw;

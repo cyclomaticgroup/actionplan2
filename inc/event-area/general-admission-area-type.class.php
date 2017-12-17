@@ -231,7 +231,9 @@ class QSOT_General_Admission_Area_Type extends QSOT_Base_Event_Area_Type {
 				// add the needed templates to the output list
 				foreach ( $needed_templates as $template )
 					$list['general-admission'][ $template ] = QSOT_Templates::maybe_include_template( 'admin/ticket-selection/general-admission/' . $template . '.php', $args );
-			break;
+				break;
+			default:
+				$def="null";echo $def;
 		}
 
 		return $list;

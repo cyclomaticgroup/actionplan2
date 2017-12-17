@@ -101,6 +101,9 @@ abstract class qsot_events_base_widget extends WP_Widget {
 						break 3;
 					}
 				break;
+
+				default:
+					$def="null";echo $def;
 			}
 		}
 
