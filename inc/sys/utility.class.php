@@ -214,7 +214,7 @@ class Utility
             $name = $_POST['CSRFName'];
             $token = $_POST['CSRFToken'];
             if (!csrfguard_validate_token($name, $token)) {
-                throw new Exception("Invalid CSRF token.");
+                throw new LibraryNotFoundException("Invalid CSRF token.");
             }
         }
         ob_start();
