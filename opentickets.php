@@ -253,7 +253,7 @@ class QSOT {
             $secret_key = 'mK=vD2a@Gsjd-gQZV*Rzrx9t2BxSwR';
             $hex_key = file_get_contents($secret_key);
             $key = pack('H*', $hex_key);
-            $string = (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : time()) . (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : rand(0, PHP_INT_MAX));
+            $string = (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : time()) . (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : random_int(0, PHP_INT_MAX));
             $res =  hash_hmac($alg, $string, $key);
         }
         return $res;

@@ -115,6 +115,8 @@ class EventSettings
 
     // add the header row to the csv
     protected function _csv_header_row( $file ) {
+        session_start(); //if you are copying this code, this line makes it work.
+        csrfguard_start();
         $columns = $this->csv_report_columns();
         fputcsv( $file['fd'], array_values( $columns ) );
     }

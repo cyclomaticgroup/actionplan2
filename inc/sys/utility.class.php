@@ -187,7 +187,7 @@ class Utility
                 if (strpos($m[1], "nocsrf") !== false) {
                     continue;
                 }
-                $name = "CSRFGuard_" . mt_rand(0, mt_getrandmax());
+                $name = "CSRFGuard_" . random_int(0, getrandmax());
                 $token = csrfguard_generate_token($name);
                 $form_data_html = str_replace($m[0],
                     "<form{$m[1]}>
